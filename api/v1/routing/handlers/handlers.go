@@ -1,4 +1,4 @@
-package routing
+package handlers
 
 import "net/http"
 

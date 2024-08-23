@@ -13,12 +13,18 @@ func IsAuthenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorization := r.Header.Get("Authorization")
 
-		if !strings.HasPrefix(authorization, "Bearer ") {
+		if !strings.HasPrefix(authorization, "Bearer ") && !strings.HasPrefix(authorization, "Admin ") {
 			writeUnauthed(w)
 			return
 		}
 
-		encodedToken := strings.TrimPrefix(authorization, "Bearer ")
+		isAdmin := strings.HasPrefix(authorization, "Admin ")
+		var prefix = "Bearer "
+		if isAdmin {
+			prefix = "Admin "
+		}
+
+		encodedToken := strings.TrimPrefix(authorization, prefix)
 
 		token, err := base64.StdEncoding.DecodeString(encodedToken)
 		if err != nil {

@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"goapi/internal/middleware"
-	"goapi/internal/routing"
+	"gotalk/api/v1/middleware"
+	"gotalk/api/v1/routing"
 	"log"
 	"net/http"
 )
@@ -15,13 +15,16 @@ func main() {
 	flag.Parse()
 
 	router := routing.Router()
+	adminRouter := routing.AdminRouter()
+
+	router.Handle("/", middleware.EnsureAdmin(adminRouter))
+
 	v1 := http.NewServeMux()
 	v1.Handle("/v1/", http.StripPrefix("/v1", router))
 
 	stack := middleware.CreateStack(
 		middleware.Logging,
 		middleware.IsAuthenticated,
-		middleware.LoadUser,
 	)
 
 	server := http.Server {
