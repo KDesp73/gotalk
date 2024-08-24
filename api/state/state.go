@@ -7,6 +7,7 @@ import (
 	"gotalk/internal/threads"
 	"gotalk/internal/users"
 	"os"
+	"time"
 )
 
 type State struct {
@@ -16,6 +17,8 @@ type State struct {
 
 var Instance *State
 var KeySize = 16
+var SaveInterval = 5 * time.Minute
+var StateFile = "gotalk.state"
 
 func StateInit() *State {
 	return &State{

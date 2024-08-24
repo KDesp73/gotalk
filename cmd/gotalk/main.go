@@ -2,21 +2,20 @@ package main
 
 import (
 	"encoding/hex"
-	"flag"
 	"fmt"
 	"gotalk/api/state"
 	"gotalk/api/v1/middleware"
 	"gotalk/api/v1/routing"
-	"gotalk/internal/encryption"
+	"gotalk/internal/options"
 	"gotalk/internal/utils"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
-
-const StateFile = "gotalk.state"
 
 func getKey() ([]byte, error) {
 	key := os.Getenv("ENCR_KEY")
@@ -32,25 +31,25 @@ func getKey() ([]byte, error) {
 	return decodedKey, nil
 }
 
+func save(s *state.State, key []byte) {
+	fmt.Println("INFO: Saving state...")
+	err := state.SaveState(s, state.StateFile, key)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ERRO: Could not save the state (%v)\n", err);
+	}
+}
+
+
 func main() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	var port = 8080
-	var generate_key = false
-	flag.IntVar(&port, "port", port, "Specify the port")
-	flag.BoolVar(&generate_key, "generate-key", generate_key, "Generate an encryption key")
-	flag.Parse()
+	ticker := time.NewTicker(state.SaveInterval)
+	defer ticker.Stop()
 
-	if generate_key {
-		key, err := encryption.GenerateKey(state.KeySize)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "ERRO: Could not generate key\n")
-			os.Exit(1)
-		}
-		fmt.Printf("Key: %s\n", hex.EncodeToString(key))
-		os.Exit(0)
-	}
+	options := options.ParseOptions()
+	options.HandleOptions()
 
 	decodedKey, err := getKey()
 	if err != nil {
@@ -58,11 +57,12 @@ func main() {
 		os.Exit(1)
 	}
 	
-	if utils.FileExists(StateFile) {
-		s, err := state.LoadState(StateFile, decodedKey)
+	if utils.FileExists(state.StateFile) {
+		s, err := state.LoadState(state.StateFile, decodedKey)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "ERRO: Could not load state from file\n")
+			utils.CopyFile(state.StateFile, state.StateFile+".old")
 			state.Instance = state.StateInit()
 		} else {
 			fmt.Println("INFO: Loading state...")
@@ -87,22 +87,32 @@ func main() {
 	)
 
 	server := http.Server {
-		Addr: fmt.Sprintf(":%d", port),
+		Addr: fmt.Sprintf(":%d", options.Port),
 		Handler: stack(router),
 	}
 
-	log.Printf("Starting server on port %d", port)
+	log.Printf("Starting server on port %d", options.Port)
+	
+	done := make(chan bool)
+
+	go func() {
+		for {
+			select {
+			case <-done:
+				return
+			case _ = <-ticker.C:
+				save(state.Instance, decodedKey)
+			}
+		}
+	}()
+
 	go server.ListenAndServe()
+
 
 	<-sigChan
 	println()
 
-	fmt.Println("INFO: Saving state...")
-	err = state.SaveState(state.Instance, StateFile, decodedKey)
-
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERRO: Could not save the state (%v)\n", err);
-	}
+	save(state.Instance, decodedKey)
 
 	fmt.Println("INFO: Terminating...")
 }

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"io"
 	"os"
 	"strings"
 	"time"
@@ -27,4 +28,35 @@ func FileExists(filename string) bool {
 
 func StrEmpty(str string) bool {
 	return strings.TrimSpace(str) == ""
+}
+
+func CopyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+
+	defer sourceFile.Close()
+
+	destinationFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destinationFile.Close()
+
+	_, err = io.Copy(destinationFile, sourceFile)
+	if err != nil {
+		return err
+	}
+
+	sourceInfo, err := sourceFile.Stat()
+	if err != nil {
+		return err
+	}
+	err = os.Chmod(dst, sourceInfo.Mode())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
