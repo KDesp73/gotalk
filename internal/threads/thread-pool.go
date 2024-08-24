@@ -33,6 +33,23 @@ func (p *ThreadPool) GenerateId() string {
 	return id.String()
 }
 
+func (p *ThreadPool) RemoveThread(id string) bool {
+	index, exists := p.idHashMap[id]
+	if !exists {
+		return false
+	}
+
+	p.Threads = append(p.Threads[:index], p.Threads[index+1:]...)
+
+	delete(p.idHashMap, id)
+
+	for i := index; i < len(p.Threads); i++ {
+		p.idHashMap[p.Threads[i].ID] = i
+	}
+
+	return true
+}
+
 func (p *ThreadPool) PushThread(thread *Thread) string {
 	id := p.GenerateId()
 

@@ -2,7 +2,6 @@ package users
 
 import (
 	"gotalk/internal/encryption"
-
 	"github.com/google/uuid"
 )
 
@@ -58,4 +57,8 @@ func (p *UserPool) PushUser(user *User) string {
 	p.Users = append(p.Users, user)
 
 	return id
+}
+
+func (p *UserPool) IsAdmin(id string) bool {
+	return p.Get(id).Type == USER_ADMIN
 }

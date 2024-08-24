@@ -39,22 +39,34 @@ func save(s *state.State, key []byte) {
 	}
 }
 
+func backup(s *state.State, key []byte) {
+	fmt.Println("INFO: Backing up state...")
+	err := state.SaveState(s, state.StateFileBackup, key)
+
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ERRO: Could not save the state (%v)\n", err);
+	}
+}
+
 
 func main() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
-	ticker := time.NewTicker(state.SaveInterval)
-	defer ticker.Stop()
+	saveTicker := time.NewTicker(state.SaveInterval)
+	defer saveTicker.Stop()
+	backupTicker := time.NewTicker(state.BackupInterval)
+	defer backupTicker.Stop()
 
 	options := options.ParseOptions()
 	options.HandleOptions()
 
-	decodedKey, err := getKey()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERRO: %s\n", err.Error())
-		os.Exit(1)
-	}
+	// decodedKey, err := getKey()
+	// if err != nil {
+	// 	fmt.Fprintf(os.Stderr, "ERRO: %s\n", err.Error())
+	// 	os.Exit(1)
+	// }
+	var decodedKey []byte = nil
 	
 	if utils.FileExists(state.StateFile) {
 		s, err := state.LoadState(state.StateFile, decodedKey)
@@ -72,17 +84,10 @@ func main() {
 	}
 
 
+
 	router := routing.Router()
-	adminRouter := routing.AdminRouter()
-
-	router.Handle("/", middleware.EnsureAdmin(adminRouter))
-
-	v1 := http.NewServeMux()
-	v1.Handle("/v1/", http.StripPrefix("/v1", router))
-
 	stack := middleware.CreateStack(
 		middleware.Logging,
-		middleware.IsAuthenticated,
 	)
 
 	server := http.Server {
@@ -98,8 +103,10 @@ func main() {
 			select {
 			case <-done:
 				return
-			case _ = <-ticker.C:
+			case _ = <-saveTicker.C:
 				save(state.Instance, decodedKey)
+			case _ = <-backupTicker.C:
+				backup(state.Instance, decodedKey)
 			}
 		}
 	}()

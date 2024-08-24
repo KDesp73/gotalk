@@ -7,7 +7,15 @@ import (
 )
 
 var STATUS_BAD_REQUEST = http.StatusBadRequest
+var STATUS_FAIL = http.StatusInternalServerError
 var STATUS_CONFLICT = http.StatusConflict
+
+var FAILED = func(s string) json.Json {
+	return json.Json{
+		Status: STATUS_FAIL,
+		Message: fmt.Sprintf("Failed to %s", s),
+	}
+}
 
 var PARSING_FORM_FAILED = json.Json{
 	Status: STATUS_BAD_REQUEST,

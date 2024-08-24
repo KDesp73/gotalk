@@ -1,5 +1,8 @@
 gotalk
 gotalk-test
+gotalk-cli
 .changelog
-gotalk.state
-gotalk.state.old
+gotalk.gob
+gotalk.gob.old
+gotalk.gob.backup
+webc-gen

@@ -1,15 +1,15 @@
 package middleware
 
 import (
-	"encoding/base64"
-	"log"
+	"gotalk/api/state"
+	"gotalk/internal/encryption"
 	"net/http"
 	"strings"
 )
 
 const AuthUserID = "middleware.auth.userID"
 
-func IsAuthenticated(next http.Handler) http.Handler {
+func EnsureAuthenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorization := r.Header.Get("Authorization")
 		prefix := "Bearer "
@@ -21,14 +21,19 @@ func IsAuthenticated(next http.Handler) http.Handler {
 
 		encodedToken := strings.TrimPrefix(authorization, prefix)
 
-		token, err := base64.StdEncoding.DecodeString(encodedToken)
-		if err != nil {
+		hashedToken := encryption.Hash(encodedToken)
+
+		match := false
+		for _, user := range state.Instance.Users.Users {
+			if hashedToken == user.Key {
+				match = true
+			}
+		}
+
+		if !match {
 			writeUnauthed(w)
 			return
 		}
-
-		userID := string(token)
-		log.Printf("Authorization successful (userID: %s)", userID)
 
 		next.ServeHTTP(w, r)
 	})

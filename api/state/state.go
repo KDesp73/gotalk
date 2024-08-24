@@ -18,8 +18,10 @@ type State struct {
 var Instance *State
 var KeySize = 16
 var SaveInterval = 2 * time.Minute
-var StateFile = "gotalk.state"
-var StateFileOld = "gotalk.state.old"
+var BackupInterval = 10 * time.Minute
+var StateFile = "gotalk.gob"
+var StateFileOld = "gotalk.gob.old"
+var StateFileBackup = "gotalk.gob.backup"
 
 func StateInit() *State {
 	return &State{

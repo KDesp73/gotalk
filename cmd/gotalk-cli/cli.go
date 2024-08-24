@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"gotalk/api/state"
 	"gotalk/internal/utils"
+	"gotalk/internal/users"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -63,7 +65,35 @@ func listComments(s *state.State) {
 	fmt.Printf(borderFmt, dashes(idDashes), dashes(authorDashes), dashes(contentDashes), dashes(threadIdDashes), dashes(timeDashes))
 }
 
+func listThreads(s *state.State) {
+	if(len(s.Threads.Threads) == 0){
+		fmt.Printf("No threads found\n");
+		os.Exit(0)
+	}
+
+	idDashes := 36
+	commentCountDashes := 13
+	lineFmt := "| %*s | %*s |\n"
+
+	fmt.Printf("+ %s + %s +\n", dashes(idDashes), dashes(commentCountDashes))
+	fmt.Printf(lineFmt, -idDashes, "ID", -commentCountDashes, "Comment Count")
+	fmt.Printf("+ %s + %s +\n", dashes(idDashes), dashes(commentCountDashes))
+
+	for _, thread := range s.Threads.Threads {
+		fmt.Printf(lineFmt, 
+			-idDashes, thread.ID,
+			-commentCountDashes, strconv.Itoa(len(thread.Comments)),
+		)
+	}
+	fmt.Printf("+ %s + %s +\n", dashes(idDashes), dashes(commentCountDashes))
+}
+
 func listUsers(s *state.State){
+	if len(s.Users.Users) == 0 {
+		fmt.Printf("No users found\n")
+		os.Exit(0)
+	}
+
 	lineFmt := "| %*s | %*s | %*s | %*s | %*s |\n"
 	borderFmt := "+ %s + %s + %s + %s + %s +\n"
 
@@ -89,13 +119,43 @@ func listUsers(s *state.State){
 
 }
 
+func sudo(s *state.State, name string, un bool) {
+	found := false
+	for _, user := range s.Users.Users {
+		if name == user.Name {
+			if un {
+				user.Type = users.USER_DEFAULT
+			} else {
+				user.Type = users.USER_ADMIN
+			}
+			found = true
+			break
+		}
+	}
+	if !found {
+		fmt.Fprintf(os.Stderr, "%s not found", name)
+	} else if un {
+		state.SaveState(s, state.StateFile, nil)
+		fmt.Printf("User %s is now not an admin\n", name)
+	} else {
+		state.SaveState(s, state.StateFile, nil)
+		fmt.Printf("User %s is now an admin\n", name)
+	}
+}
+
 func main() {
-	var comments = false
-	var threads = false
-	var users = false
-	flag.BoolVar(&comments, "comments", comments, "List comments")
-	flag.BoolVar(&threads, "threads", threads, "List threads")
-	flag.BoolVar(&users, "users", users, "List users")
+	var commentsFlag = false
+	var threadsFlag = false
+	var usersFlag = false
+	var backupFlag = false
+	var unFlag = false
+	var sudoFlag = ""
+	flag.BoolVar(&commentsFlag, "comments", commentsFlag, "List comments")
+	flag.BoolVar(&threadsFlag, "threads", threadsFlag, "List threads")
+	flag.BoolVar(&usersFlag, "users", usersFlag, "List users")
+	flag.BoolVar(&backupFlag, "backup", backupFlag, "Backup state")
+	flag.BoolVar(&unFlag, "un", unFlag, "Reverse action")
+	flag.StringVar(&sudoFlag, "sudo", sudoFlag, "Make user an admin")
 	flag.Parse()
 	
 	var s *state.State
@@ -113,14 +173,24 @@ func main() {
 	}
 
 	if(len(os.Args) < 2) {
-		fmt.Println("At least 1 argument is required")
+		fmt.Fprintln(os.Stderr, "ERRO: At least 1 argument is required")
 		os.Exit(1)
 	}
 
-	if comments {
+	if backupFlag {
+		utils.CopyFile(state.StateFile, state.StateFileBackup)
+		fmt.Printf("Backup created at %s\n", state.StateFileBackup)
+	}
+
+	if commentsFlag {
 		listComments(s)
-	} else if threads {
-	} else if users {
+	} else if threadsFlag {
+		listThreads(s)
+	} else if usersFlag {
 		listUsers(s)
+	}
+
+	if strings.TrimSpace(sudoFlag) != "" {
+		sudo(s, strings.TrimSpace(sudoFlag), unFlag)
 	}
 }
