@@ -1,15 +1,16 @@
 package routing
 
 import (
-	"gotalk/internal/routing/handlers"
+	"gotalk/api/v1/routing/handlers"
 	"net/http"
 )
 
 func Router() *http.ServeMux{
 	router := http.NewServeMux()
 	
-	router.HandleFunc("GET /greet/{name}", handlers.Greeter)
 	router.HandleFunc("/ping", handlers.Pong)
+	router.HandleFunc("POST /comment", handlers.PostComment)
+	router.HandleFunc("POST /register", handlers.Register)
 	
 	return router
 }
