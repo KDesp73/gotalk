@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"fmt"
+	"gotalk/api/state"
 	"gotalk/internal/json"
+	"gotalk/internal/threads"
 	"net/http"
 )
 
@@ -20,5 +22,21 @@ func Sudo(w http.ResponseWriter, r *http.Request) {
 	w.Write(json.Json{
 		Status: 200,
 		Message: fmt.Sprintf("%s is now an admin", user),
+	}.ToBytes())
+}
+
+func DeleteThread(w http.ResponseWriter, r *http.Request) {
+}
+
+
+func NewThread(w http.ResponseWriter, r *http.Request) {
+	id := state.Instance.Threads.PushThread(&threads.Thread{})
+
+	w.Write(json.Json {
+		Status: http.StatusAccepted,
+		Message: "Thread created",
+		Data: json.NestedJson{
+			Key: id,
+		},
 	}.ToBytes())
 }

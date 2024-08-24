@@ -33,12 +33,14 @@ func (p *ThreadPool) GenerateId() string {
 	return id.String()
 }
 
-func (p *ThreadPool) PushThread(thread *Thread) {
+func (p *ThreadPool) PushThread(thread *Thread) string {
 	id := p.GenerateId()
 
 	thread.ID = id
 	p.idHashMap[id] = len(p.Threads) // each key points to the thread's index
 	p.Threads = append(p.Threads, thread)
+
+	return id
 }
 
 func (p *ThreadPool) Get(id string) *Thread {

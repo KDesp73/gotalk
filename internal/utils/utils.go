@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -59,4 +60,21 @@ func CopyFile(src, dst string) error {
 	}
 
 	return nil
+}
+
+func IsValidEmail(email string) bool {
+	const emailPattern = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	re := regexp.MustCompile(emailPattern)
+
+	return re.MatchString(email)
+}
+
+func ShortenString(s string, length int) string {
+	if len(s) <= length {
+		return s
+	}
+	if length < 3 {
+		return s[:length]
+	}
+	return s[:length-3] + "..."
 }

@@ -19,6 +19,8 @@ func AdminRouter() *http.ServeMux {
 	adminRouter := http.NewServeMux()
 
 	adminRouter.HandleFunc("POST /sudo/{user}", handlers.Sudo)
+	adminRouter.HandleFunc("POST /thread/new", handlers.NewThread)
+	adminRouter.HandleFunc("DELETE /thread/delete", handlers.DeleteThread)
 
 	return adminRouter
 }

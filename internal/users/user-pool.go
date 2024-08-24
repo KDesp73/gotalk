@@ -24,6 +24,20 @@ func (p UserPool) idExists(id string) bool {
 	return ok
 }
 
+func (p *UserPool) EmailExists(email string) bool {
+	for _, user := range p.Users {
+		if(email == user.Email) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (p *UserPool) Get(id string) *User {
+	return p.Users[p.idHashMap[id]]
+}
+
 func (p *UserPool) GenerateId() string {
 	var id uuid.UUID = uuid.New()
 	for{

@@ -8,7 +8,6 @@ import (
 	"gotalk/api/v1/routing"
 	"gotalk/internal/options"
 	"gotalk/internal/utils"
-	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -62,7 +61,7 @@ func main() {
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "ERRO: Could not load state from file\n")
-			utils.CopyFile(state.StateFile, state.StateFile+".old")
+			utils.CopyFile(state.StateFile, state.StateFileOld)
 			state.Instance = state.StateInit()
 		} else {
 			fmt.Println("INFO: Loading state...")
@@ -94,7 +93,6 @@ func main() {
 	log.Printf("Starting server on port %d", options.Port)
 	
 	done := make(chan bool)
-
 	go func() {
 		for {
 			select {
