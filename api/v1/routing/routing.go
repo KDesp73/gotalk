@@ -8,7 +8,7 @@ import (
 func Router() *http.ServeMux{
 	router := http.NewServeMux()
 	
-	router.HandleFunc("/ping", handlers.Pong)
+	router.HandleFunc("GET /ping", handlers.Pong)
 	router.HandleFunc("POST /comment", handlers.PostComment)
 	router.HandleFunc("POST /register", handlers.Register)
 	

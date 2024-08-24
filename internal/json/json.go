@@ -2,6 +2,7 @@ package json
 
 import (
 	"encoding/json"
+	"gotalk/internal/utils"
 )
 
 type NestedJson struct {
@@ -15,11 +16,12 @@ type Json struct {
 }
 
 func (j Json) ToString() string {
-	jsonData, err := json.Marshal(j)
-	if err != nil {
+	json := utils.JsonToString(j)
+	if json == "" {
 		return "{status: 500, message: \"Internal Server Error\"}"
 	}
-	return string(jsonData)
+
+	return json
 }
 
 func (j Json) ToBytes() []byte {

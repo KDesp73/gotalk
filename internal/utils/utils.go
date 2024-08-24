@@ -2,6 +2,8 @@ package utils
 
 import (
 	"encoding/json"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -16,4 +18,13 @@ func JsonToString(jsonStruct any) string {
 		return ""
 	}
 	return string(jsonData)
+}
+
+func FileExists(filename string) bool {
+	_, err := os.Stat(filename)
+	return !os.IsNotExist(err)
+}
+
+func StrEmpty(str string) bool {
+	return strings.TrimSpace(str) == ""
 }
