@@ -13,6 +13,11 @@ var PARSING_FORM_FAILED = json.Json{
 	Message: "Unable to parse form",
 }
 
+var INVALID_THREAD_ID = json.Json{
+	Status: STATUS_CODE,
+	Message: "Invalid thread id",
+}
+
 var NOT_FOUND = func(s string) json.Json {
 	return json.Json{
 		Status: STATUS_CODE,

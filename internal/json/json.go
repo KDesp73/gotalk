@@ -4,9 +4,14 @@ import (
 	"encoding/json"
 )
 
+type NestedJson struct {
+	Key string `json:"key"`
+}
+
 type Json struct {
 	Status int `json:"status"`
 	Message string `json:"message"`
+	Data NestedJson `json:"data"`
 }
 
 func (j Json) ToString() string {

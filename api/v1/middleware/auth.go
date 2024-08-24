@@ -12,16 +12,11 @@ const AuthUserID = "middleware.auth.userID"
 func IsAuthenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorization := r.Header.Get("Authorization")
+		prefix := "Bearer "
 
-		if !strings.HasPrefix(authorization, "Bearer ") && !strings.HasPrefix(authorization, "Admin ") {
+		if !strings.HasPrefix(authorization, prefix) {
 			writeUnauthed(w)
 			return
-		}
-
-		isAdmin := strings.HasPrefix(authorization, "Admin ")
-		var prefix = "Bearer "
-		if isAdmin {
-			prefix = "Admin "
 		}
 
 		encodedToken := strings.TrimPrefix(authorization, prefix)

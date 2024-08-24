@@ -3,8 +3,8 @@ package comments
 import (
 	"fmt"
 	"gotalk/internal/encryption"
+	"gotalk/internal/utils"
 	"strconv"
-	"time"
 )
 
 type Comment struct {
@@ -16,13 +16,10 @@ type Comment struct {
 }
 
 func CreateComment(author string, content string) *Comment {
-	currentTime := time.Now()
-	timestamp := currentTime.Format("2006/01/02 15:04:05")
-
 	return &Comment{
 		Author: author,
 		Content: content,
-		Timestamp: timestamp,
+		Timestamp: utils.CurrentTimestamp(),
 	}
 }
 

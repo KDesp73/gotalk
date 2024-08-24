@@ -1,6 +1,10 @@
 package users
 
-import "github.com/google/uuid"
+import (
+	"gotalk/internal/encryption"
+
+	"github.com/google/uuid"
+)
 
 type UserPool struct {
 	Users []*User
@@ -20,7 +24,7 @@ func (p UserPool) idExists(id string) bool {
 	return ok
 }
 
-func (p *UserPool) PushUser(thread *User) {
+func (p *UserPool) GenerateId() string {
 	var id uuid.UUID = uuid.New()
 	for{
 		if !p.idExists(id.String()) {
@@ -28,7 +32,16 @@ func (p *UserPool) PushUser(thread *User) {
 		}
 		id = uuid.New()
 	}
+	return id.String()
+}
 
-	p.idHashMap[id.String()] = len(p.Users) // each key points to the user's index
-	p.Users = append(p.Users, thread)
+func (p *UserPool) PushUser(user *User) string {
+	id := p.GenerateId()
+	hashedId := encryption.Hash(id)
+
+	p.idHashMap[hashedId] = len(p.Users) // each key points to the user's index
+	user.Key = hashedId
+	p.Users = append(p.Users, user)
+
+	return id
 }

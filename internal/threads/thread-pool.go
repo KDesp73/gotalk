@@ -22,7 +22,7 @@ func (p ThreadPool) idExists(id string) bool {
 	return ok
 }
 
-func (p *ThreadPool) PushThread(thread *Thread) {
+func (p *ThreadPool) GenerateId() string {
 	var id uuid.UUID = uuid.New()
 	for{
 		if !p.idExists(id.String()) {
@@ -30,8 +30,22 @@ func (p *ThreadPool) PushThread(thread *Thread) {
 		}
 		id = uuid.New()
 	}
+	return id.String()
+}
 
-	thread.ID = id.String()
-	p.idHashMap[id.String()] = len(p.Threads) // each key points to the thread's index
+func (p *ThreadPool) PushThread(thread *Thread) {
+	id := p.GenerateId()
+
+	thread.ID = id
+	p.idHashMap[id] = len(p.Threads) // each key points to the thread's index
 	p.Threads = append(p.Threads, thread)
+}
+
+func (p *ThreadPool) Get(id string) *Thread {
+	index := p.idHashMap[id]
+	if index < 0 || index > len(p.Threads) - 1 {
+		return nil
+	}
+
+	return p.Threads[index]
 }
