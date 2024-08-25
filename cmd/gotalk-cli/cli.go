@@ -33,7 +33,7 @@ func listComments(s *state.State) {
 		os.Exit(0)
 	}
 
-	idDashes := 8
+	idDashes := 16
 	authorDashes := 20
 	contentDashes := 30
 	threadIdDashes := 16
@@ -54,10 +54,10 @@ func listComments(s *state.State) {
 				continue
 			}
 			fmt.Printf(lineFmt, 
-				-idDashes, utils.ShortenString(comment.ID, idDashes+2), 
-				-authorDashes, utils.ShortenString(comment.Author, authorDashes+2), 
-				-contentDashes, utils.ShortenString(comment.Content, contentDashes+2), 
-				-threadIdDashes, utils.ShortenString(comment.ThreadID, threadIdDashes+2), 
+				-idDashes, utils.ShortenString(comment.ID, idDashes-2), 
+				-authorDashes, utils.ShortenString(comment.Author, authorDashes-2), 
+				-contentDashes, utils.ShortenString(comment.Content, contentDashes-2), 
+				-threadIdDashes, utils.ShortenString(comment.ThreadID, threadIdDashes-2), 
 				-timeDashes, comment.Timestamp,
 			)
 		}

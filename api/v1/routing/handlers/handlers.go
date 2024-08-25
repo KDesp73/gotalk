@@ -3,6 +3,7 @@ package handlers
 import (
 	"gotalk/api/state"
 	"gotalk/api/v1/errors"
+	"gotalk/api/v1/response"
 	"gotalk/internal/json"
 	"gotalk/internal/users"
 	"gotalk/internal/utils"
@@ -11,21 +12,18 @@ import (
 	"strings"
 )
 
-func Greeter(w http.ResponseWriter, r *http.Request){
-	name := r.PathValue("name")
-	w.Write([]byte("Hello, " + name))
-}
-
+// /ping
 func Pong(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
 }
 
+// /
 func ServeIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
 	content, err := os.ReadFile("./docs/index.html")
 
 	if err != nil {
-		http.Error(w, errors.FAILED("serve index.html").ToString(), errors.STATUS_FAIL)
+		response.Error(w, errors.FAILED("serving index.html"))
 		return
 	}
 
@@ -36,7 +34,7 @@ func ServeIndex(w http.ResponseWriter, r *http.Request) {
 func PostComment(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
-		http.Error(w, errors.PARSING_FORM_FAILED.ToString(), errors.STATUS_BAD_REQUEST)
+		response.Error(w, errors.FAILED("parsing form"))
 		return
 	}
 
@@ -45,39 +43,43 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 	threadid := r.FormValue("threadid")
 
 	if strings.TrimSpace(content) == "" {
-		// I miss C macros
-		http.Error(w, errors.NOT_FOUND("Content").ToString(), errors.STATUS_BAD_REQUEST)
+		response.Error(w, errors.NOT_FOUND("Content"))
 		return
 	}
 	if strings.TrimSpace(threadid) == "" {
-		http.Error(w, errors.NOT_FOUND("Thread id").ToString(), errors.STATUS_BAD_REQUEST)
+		response.Error(w, errors.NOT_FOUND("Thread id"))
 		return
 	}
 	if strings.TrimSpace(userid) == "" {
-		http.Error(w, errors.NOT_FOUND("User id").ToString(), errors.STATUS_BAD_REQUEST)
+		response.Error(w, errors.NOT_FOUND("User id"))
 		return
 	}
 
 	thread := state.Instance.Threads.Get(threadid)
+
+	if thread.ID != threadid {
+		response.Error(w, errors.FAILED("finding thread"))
+		return
+	}
 	
 	if thread == nil {
-		http.Error(w, errors.INVALID_THREAD_ID.ToString(), errors.STATUS_BAD_REQUEST)
+		response.Error(w, errors.INVALID("Thread id"))
 		return
 	}
 
 	user := state.Instance.Users.Get(userid)
 
 	if user == nil {
-		http.Error(w, errors.INVALID_THREAD_ID.ToString(), errors.STATUS_BAD_REQUEST)
+		response.Error(w, errors.INVALID("Thread id"))
 		return
 	}
 
 	thread.AppendComment(user.Name, content)
 
-	w.Write(json.Json {
+	response.Success(w, json.Json {
 		Status: 201,
 		Message: "Comment posted",
-	}.ToBytes())
+	})
 }
 
 // /register?name={name}&email={email}
@@ -85,7 +87,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 
 	if err != nil {
-		http.Error(w, errors.PARSING_FORM_FAILED.ToString(), errors.STATUS_BAD_REQUEST)
+		response.Error(w, errors.FAILED("parsing form"))
 		return
 	}
 
@@ -93,19 +95,23 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 
 	if strings.TrimSpace(name) == "" {
-		http.Error(w, errors.NOT_FOUND("Name").ToString(), errors.STATUS_BAD_REQUEST)
+		response.Error(w, errors.NOT_FOUND("Name"))
 		return
 	}
 	if strings.TrimSpace(email) == "" {
-		http.Error(w, errors.NOT_FOUND("Email").ToString(), errors.STATUS_BAD_REQUEST)
+		response.Error(w, errors.NOT_FOUND("Email"))
 		return
 	}
 	if !utils.IsValidEmail(email) {
-		http.Error(w, errors.INVALID_EMAIL.ToString(), errors.INVALID_EMAIL.Status)
+		response.Error(w, errors.INVALID("email"))
+		return
+	}
+	if state.Instance.Users.NameExists(name) {
+		response.Error(w, errors.DUPLICATE("name"))
 		return
 	}
 	if state.Instance.Users.EmailExists(email) {
-		http.Error(w, errors.DUPLICATE_EMAIL.ToString(), errors.DUPLICATE_EMAIL.Status)
+		response.Error(w, errors.DUPLICATE("email"))
 		return
 	}
 
@@ -116,11 +122,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		SignUpTime: utils.CurrentTimestamp(),
 	})
 
-	w.Write(json.Json{
+	response.Success(w, json.Json{
 		Status: 201,
 		Message: "Registration complete",
 		Data: json.NestedJson{
 			Key: key,
 		},
-	}.ToBytes())
+	})
 }

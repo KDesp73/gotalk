@@ -23,6 +23,17 @@ func (p UserPool) idExists(id string) bool {
 	return ok
 }
 
+
+func (p *UserPool) NameExists(name string) bool {
+	for _, user := range p.Users {
+		if(name == user.Name) {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (p *UserPool) EmailExists(email string) bool {
 	for _, user := range p.Users {
 		if(email == user.Email) {

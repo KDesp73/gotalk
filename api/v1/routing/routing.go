@@ -25,7 +25,7 @@ func Router() *http.ServeMux {
 func AuthRouter() *http.ServeMux {
 	router := http.NewServeMux()
 	
-	router.HandleFunc("POST /comment", handlers.PostComment)
+	router.HandleFunc("POST /comment/new", handlers.PostComment)
 	
 	return router
 }
@@ -37,6 +37,7 @@ func AdminRouter() *http.ServeMux {
 	router.HandleFunc("POST /sudo/undo", handlers.UndoSudo)
 	router.HandleFunc("POST /thread/new", handlers.NewThread)
 	router.HandleFunc("DELETE /thread/delete", handlers.DeleteThread)
+	router.HandleFunc("DELETE /comment/delete", handlers.DeleteComment)
 	
 	return router
 }

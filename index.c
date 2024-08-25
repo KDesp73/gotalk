@@ -16,7 +16,7 @@ char* Index() {
     WEBC_StyleEnd(&buffer);
 
     WEBC_BodyStart(&buffer, STYLE("padding: 0; margin: 0;"));
-        WEBC_DivStart(&buffer, WEBC_UseModifier((Modifier){.class = "markdown-body", .style = "margin: 5em 30em;"}));
+        WEBC_DivStart(&buffer, WEBC_UseModifier((Modifier){.class = "markdown-body", .style = "margin: 5% 25%;"}));
             WEBC_IntegrateFile(&buffer, "./README.md");
         WEBC_DivEnd(&buffer);
     WEBC_BodyEnd(&buffer);
