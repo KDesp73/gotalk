@@ -1,7 +1,8 @@
 #include <webc/webc-core.h>
 #include <webc/webc-actions.h>
 
-char* Index() {
+char* Index()
+{
     char* buffer = NULL;
 
     WEBC_HtmlStart(&buffer, "en");
@@ -26,7 +27,8 @@ char* Index() {
     return buffer;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     WebcAction action = WEBC_ParseCliArgs(argc, argv);
     
     Tree tree = WEBC_MakeTree("docs", 

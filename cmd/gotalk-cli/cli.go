@@ -54,10 +54,10 @@ func listComments(s *state.State) {
 				continue
 			}
 			fmt.Printf(lineFmt, 
-				-idDashes, utils.ShortenString(comment.ID, idDashes-2), 
-				-authorDashes, utils.ShortenString(comment.Author, authorDashes-2), 
-				-contentDashes, utils.ShortenString(comment.Content, contentDashes-2), 
-				-threadIdDashes, utils.ShortenString(comment.ThreadID, threadIdDashes-2), 
+				-idDashes, utils.ShortenString(comment.ID, idDashes), 
+				-authorDashes, utils.ShortenString(comment.Author, authorDashes), 
+				-contentDashes, utils.ShortenString(comment.Content, contentDashes), 
+				-threadIdDashes, utils.ShortenString(comment.ThreadID, threadIdDashes), 
 				-timeDashes, comment.Timestamp,
 			)
 		}
@@ -108,10 +108,10 @@ func listUsers(s *state.State){
 
 	for _, user := range s.Users.Users {
 		fmt.Printf(lineFmt, 
-			-nameDashes, utils.ShortenString(user.Name, nameDashes-2), 
-			-emailDashes, utils.ShortenString(user.Email, emailDashes-2), 
-			-keyDashes, utils.ShortenString(user.Key, keyDashes-2), 
-			-typeDashes, utils.ShortenString(user.Type, typeDashes-2), 
+			-nameDashes, utils.ShortenString(user.Name, nameDashes), 
+			-emailDashes, utils.ShortenString(user.Email, emailDashes), 
+			-keyDashes, utils.ShortenString(user.Key, keyDashes), 
+			-typeDashes, utils.ShortenString(user.Type, typeDashes), 
 			-timeDashes, user.SignUpTime,
 		)
 	}
