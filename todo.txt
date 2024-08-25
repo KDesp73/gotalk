@@ -1,3 +1,7 @@
 TODO: encrypt/decrypt state
 TODO: post comments to correct thread
 TODO: post comments with correct author
+TODO: get comments
+TODO: add limit on requests
+TODO: tui management application
+TODO: web management application

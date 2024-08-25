@@ -27,3 +27,6 @@ jobs:
     - name: Cli
       run: go build -v ./cmd/gotalk-cli
 
+    - name: Test
+      run: go test -v ./...
+
