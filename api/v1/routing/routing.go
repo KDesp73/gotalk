@@ -9,11 +9,12 @@ import (
 func Router() *http.ServeMux {
 	router := http.NewServeMux()
 	
+	router.HandleFunc("/", handlers.ServeIndex)
 	router.HandleFunc("GET /ping", handlers.Pong)
 	router.HandleFunc("POST /register", handlers.Register)
 
-	router.Handle("/admin/", middleware.EnsureAdmin(AdminRouter()))
-	router.Handle("/", middleware.EnsureAuthenticated(AuthRouter()))
+	router.Handle("/admin/", http.StripPrefix("/admin", middleware.EnsureAdmin(AdminRouter())))
+	router.Handle("/user/", http.StripPrefix("/user", middleware.EnsureAuthenticated(AuthRouter())))
 
 	v1 := http.NewServeMux()
 	v1.Handle("/v1/", http.StripPrefix("/v1", router))
@@ -21,7 +22,7 @@ func Router() *http.ServeMux {
 	return v1
 }
 
-func AuthRouter() *http.ServeMux{
+func AuthRouter() *http.ServeMux {
 	router := http.NewServeMux()
 	
 	router.HandleFunc("POST /comment", handlers.PostComment)
@@ -30,14 +31,12 @@ func AuthRouter() *http.ServeMux{
 }
 
 func AdminRouter() *http.ServeMux {
-	adminRouter := http.NewServeMux()
+	router := http.NewServeMux()
 
-	adminRouter.HandleFunc("POST /sudo/{user}", handlers.Sudo)
-	adminRouter.HandleFunc("POST /thread/new", handlers.NewThread)
-	adminRouter.HandleFunc("DELETE /thread/delete", handlers.DeleteThread)
+	router.HandleFunc("POST /sudo", handlers.Sudo)
+	router.HandleFunc("POST /sudo/undo", handlers.UndoSudo)
+	router.HandleFunc("POST /thread/new", handlers.NewThread)
+	router.HandleFunc("DELETE /thread/delete", handlers.DeleteThread)
 	
-	admin := http.NewServeMux()
-	admin.Handle("/admin/", http.StripPrefix("/admin", adminRouter))
-
-	return admin
+	return router
 }

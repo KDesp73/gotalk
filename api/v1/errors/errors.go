@@ -9,6 +9,7 @@ import (
 var STATUS_BAD_REQUEST = http.StatusBadRequest
 var STATUS_FAIL = http.StatusInternalServerError
 var STATUS_CONFLICT = http.StatusConflict
+var STATUS_NOT_FOUND = http.StatusNotFound
 
 var FAILED = func(s string) json.Json {
 	return json.Json{
@@ -44,7 +45,7 @@ var DUPLICATE_EMAIL = json.Json{
 
 var NOT_FOUND = func(s string) json.Json {
 	return json.Json{
-		Status: STATUS_BAD_REQUEST,
-		Message: fmt.Sprintf("%s not found", s),
+		Status: STATUS_NOT_FOUND,
+		Message: fmt.Sprintf("%s n tot found", s),
 	}
 }

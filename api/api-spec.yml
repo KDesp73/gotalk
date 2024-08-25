@@ -1,140 +1,131 @@
 openapi: 3.0.0
 info:
-  title: GoTalk API
-  version: 0.0.1
+  title: Gotalk API
+  description: A general API endpoint to handle comments even on static sites
+  version: 1.0.0
 servers:
-  - url: http://localhost:8080
+  - url: /v1
 paths:
-  /add:
-    post:
-      summary: Add two numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                number1:
-                  type: number
-                  format: int
-                number2:
-                  type: number
-                  format: int
+  /ping:
+    get:
+      summary: Ping the server
       responses:
-        "200":
-          description: Successfully added two numbers
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: int
-  /subtract:
-    post:
-      summary: Subtract two numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                number1:
-                  type: number
-                  format: int
-                number2:
-                  type: number
-                  format: int
-      responses:
-        "200":
-          description: Successfully subtracted two numbers
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: int
-  /multiply:
-    post:
-      summary: Multiply two numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                number1:
-                  type: number
-                  format: int
-                number2:
-                  type: number
-                  format: int
-      responses:
-        "200":
-          description: Successfully multiplied two numbers
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: int
-  /divide:
-    post:
-      summary: Divide two numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                dividend:
-                  type: number
-                  format: int
-                divisor:
-                  type: number
-                  format: int
-      responses:
-        "200":
-          description: Successfully divided two numbers
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: int
+        '200':
+          description: pong
 
-  /sum:
+  /register:
     post:
-      summary: Add all numbers in an array
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                type: number
-                format: int
-
+      summary: Register a new user
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
       responses:
-        "200":
-          description: Successfully divided two numbers
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: int
+        '201':
+          description: Registration complete" 
+        '400':
+          description: Bad request
+        '409':
+          description: Email already exists 
+
+  /user/comment:
+    post:
+      summary: Post a comment
+      parameters:
+        - name: userid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: threadid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: content
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Comment posted successfully
+        '401':
+          description: Unauthorized
+        '400':
+          description: Bad request
+
+  /admin/sudo:
+    post:
+      summary: Grant admin privileges to a user
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Admin privileges granted
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
+        '500':
+          description: Failed to sudo
+
+  /admin/sudo/undo:
+    post:
+      summary: Revoke admin privileges from a user
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Admin privileges revoked
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
+        '500':
+          description: Failed to revoke admin privileges
+
+  /admin/thread/new:
+    post:
+      summary: Create a new thread
+      responses:
+        '201':
+          description: Thread created successfully
+        '401':
+          description: Unauthorized
+
+  /admin/thread/delete:
+    delete:
+      summary: Delete a thread
+      parameters:
+        - name: threadid
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Thread deleted successfully
+        '400':
+          description: Unable to parse form
+        '401':
+          description: Unauthorized
+        '404':
+          description: Thread not found
+

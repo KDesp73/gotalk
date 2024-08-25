@@ -7,6 +7,7 @@ import (
 	"gotalk/internal/users"
 	"gotalk/internal/utils"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -17,6 +18,18 @@ func Greeter(w http.ResponseWriter, r *http.Request){
 
 func Pong(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
+}
+
+func ServeIndex(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "text/html")
+	content, err := os.ReadFile("./docs/index.html")
+
+	if err != nil {
+		http.Error(w, errors.FAILED("serve index.html").ToString(), errors.STATUS_FAIL)
+		return
+	}
+
+	w.Write(content)
 }
 
 // /comment?threadid={threadid}&userid={userid}&content=content
@@ -62,7 +75,7 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 	thread.AppendComment(user.Name, content)
 
 	w.Write(json.Json {
-		Status: 200,
+		Status: 201,
 		Message: "Comment posted",
 	}.ToBytes())
 }
@@ -104,7 +117,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.Write(json.Json{
-		Status: http.StatusAccepted,
+		Status: 201,
 		Message: "Registration complete",
 		Data: json.NestedJson{
 			Key: key,

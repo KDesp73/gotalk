@@ -1117,6 +1117,36 @@
 <div style="margin: 5em 30em;" class="markdown-body">
 <h1>gotalk</h1>
 <p>A general api endpoint to handle comments even on static sites</p>
+<h2>Endpoints</h2>
+<p>Check <a href="https://github.com/KDesp73/gotalk/blob/main/api/api-spec.yml">api-spec.yml</a> for detailed info</p>
+<blockquote>
+<p>[!NOTE]
+All endpoints are under /v1</p>
+</blockquote>
+<h3>Open</h3>
+<ul>
+<li>GET <code>/ping</code></li>
+<li>POST <code>/register?name={name}&amp;email={email}</code></li>
+</ul>
+<h3>Authorization needed</h3>
+<blockquote>
+<p>[!NOTE]
+The following endpoints are under /user</p>
+</blockquote>
+<ul>
+<li>POST <code>/comment?userid={userid}&amp;threadid={threadid}&amp;content={content}</code></li>
+</ul>
+<h3>Admin privilleges needed</h3>
+<blockquote>
+<p>[!NOTE]
+The following endpoints are under /admin</p>
+</blockquote>
+<ul>
+<li>POST <code>/sudo?id={userid}</code></li>
+<li>POST <code>/sudo/undo?id={userid}</code></li>
+<li>POST <code>/thread/new</code></li>
+<li>DELETE <code>/thread/delete?threadid={threadid}</code></li>
+</ul>
 
 </div>
 </body>

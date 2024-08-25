@@ -62,3 +62,18 @@ func (p *UserPool) PushUser(user *User) string {
 func (p *UserPool) IsAdmin(id string) bool {
 	return p.Get(id).Type == USER_ADMIN
 }
+
+func (p *UserPool) Sudo(id string, undo bool) bool {
+	index, exists := p.idHashMap[id]
+
+	if !exists {
+		return false
+	}
+
+	if undo {
+		p.Users[index].Type = USER_DEFAULT
+	} else {
+		p.Users[index].Type = USER_ADMIN
+	}
+	return true
+}
