@@ -17,8 +17,8 @@ func GetThreads(w http.ResponseWriter, r* http.Request) {
 		Message: "Threads retreived successfully",
 		Data: json.NestedJson {},
 	}
-	for _, thread := range state.Instance.Threads.Threads {
-		j.Data.Threads = append(j.Data.Threads, thread.ID)
+	for _, thread := range state.Instance.Threads.Items {
+		j.Data.Threads = append(j.Data.Threads, *thread)
 	}
 
 	response.Success(w, j)
@@ -29,7 +29,7 @@ func DeleteThread(w http.ResponseWriter, r *http.Request) {
 	threadid = strings.TrimSpace(threadid)
 
 	if threadid == "" {
-		response.Error(w, errors.NOT_FOUND("Thread"))
+		response.Error(w, errors.NOT_SET("Thread"))
 		return
 	}
 
@@ -48,7 +48,27 @@ func DeleteThread(w http.ResponseWriter, r *http.Request) {
 
 
 func NewThread(w http.ResponseWriter, r *http.Request) {
-	id := state.Instance.Threads.PushThread(&threads.Thread{})
+	err := r.ParseForm()
+
+	if err != nil {
+		response.Error(w, errors.FAILED("parsing form"))
+		return
+	}
+
+	title := r.FormValue("title")
+	title = strings.TrimSpace(title)
+
+	if title == "" {
+		response.Error(w, errors.NOT_SET("Thread title"))
+		return
+	}
+
+	if state.Instance.Threads.TitleExists(title) {
+		response.Error(w, errors.DUPLICATE("Thread title"))
+		return
+	}
+
+	id := state.Instance.Threads.PushThread(&threads.Thread{Title: title})
 
 	response.Success(w, json.Json {
 		Status: 201,

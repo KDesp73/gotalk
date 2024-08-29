@@ -5,20 +5,30 @@ import (
 )
 
 type ThreadPool struct {
-	Threads []*Thread
-	idHashMap map[string]int
+	Items []*Thread
+	IdHashMap map[string]int
 }
 
 func PoolInit() ThreadPool {
 	pool := ThreadPool {
-		idHashMap: make(map[string]int),
+		IdHashMap: make(map[string]int),
 	}
 
 	return pool
 }
 
+
+func (p *ThreadPool) TitleExists(title string) bool {
+	for _, thread := range p.Items {
+		if title == thread.Title {
+			return true
+		}
+	}
+	return false
+}
+
 func (p ThreadPool) idExists(id string) bool {
-	_, ok := p.idHashMap[id]
+	_, ok := p.IdHashMap[id]
 	return ok
 }
 
@@ -34,17 +44,17 @@ func (p *ThreadPool) GenerateId() string {
 }
 
 func (p *ThreadPool) RemoveThread(id string) bool {
-	index, exists := p.idHashMap[id]
+	index, exists := p.IdHashMap[id]
 	if !exists {
 		return false
 	}
 
-	p.Threads = append(p.Threads[:index], p.Threads[index+1:]...)
+	p.Items = append(p.Items[:index], p.Items[index+1:]...)
 
-	delete(p.idHashMap, id)
+	delete(p.IdHashMap, id)
 
-	for i := index; i < len(p.Threads); i++ {
-		p.idHashMap[p.Threads[i].ID] = i
+	for i := index; i < len(p.Items); i++ {
+		p.IdHashMap[p.Items[i].ID] = i
 	}
 
 	return true
@@ -54,19 +64,19 @@ func (p *ThreadPool) PushThread(thread *Thread) string {
 	id := p.GenerateId()
 
 	thread.ID = id
-	p.idHashMap[id] = len(p.Threads) // each key points to the thread's index
-	p.Threads = append(p.Threads, thread)
+	p.IdHashMap[id] = len(p.Items) // each key points to the thread's index
+	p.Items = append(p.Items, thread)
 
 	return id
 }
 
 func (p *ThreadPool) Get(id string) *Thread {
-	index := p.idHashMap[id]
-	if index < 0 || index > len(p.Threads) - 1 {
+	index := p.IdHashMap[id]
+	if index < 0 || index > len(p.Items) - 1 {
 		return nil
 	}
 
-	return p.Threads[index]
+	return p.Items[index]
 }
 
 // SearchCommentID searches for a comment by 
@@ -76,7 +86,7 @@ func (t *ThreadPool) SearchCommentID(id string) int {
 	if len(id) < 7 {
 		return -1
 	}
-	for _, thread := range t.Threads {
+	for _, thread := range t.Items {
 		for i, comment := range thread.Comments {
 			if len(comment.ID) >= 7 && comment.ID[:7] == id[:7] { // Compare the first 7 characters
 				return i

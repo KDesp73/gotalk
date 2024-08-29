@@ -1,6 +1,5 @@
-gotalk
-gotalk-test
-gotalk-cli
+./gotalk
+./gotalk-cli
 .changelog
 gotalk.gob
 gotalk.gob.old

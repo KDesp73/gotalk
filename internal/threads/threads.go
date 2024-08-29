@@ -8,8 +8,9 @@ import (
 
 
 type Thread struct {
-	ID string
-	Comments []*comments.Comment
+	ID string `json:"id"`
+	Title string `json:"title"`
+	Comments []*comments.Comment `json:"comments"`
 }
 
 func (t *Thread) PushComment(author string, content string) {

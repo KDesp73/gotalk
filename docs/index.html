@@ -1116,36 +1116,82 @@
 <body style="padding: 0; margin: 0;">
 <div style="margin: 5% 25%;" class="markdown-body">
 <h1>gotalk</h1>
-<p>A general api endpoint to handle comments even on static sites</p>
+<p>A general API endpoint to handle comments even on static sites.</p>
 <h2>Endpoints</h2>
-<p>Check <a href="https://github.com/KDesp73/gotalk/blob/main/api/api-spec.yml">api-spec.yml</a> for detailed info</p>
+<p>Check <a href="https://github.com/KDesp73/gotalk/blob/main/api/api-spec.yml">api-spec.yml</a> for detailed info.</p>
 <blockquote>
 <p>[!NOTE]
-All endpoints are under /v1</p>
+All endpoints are under <code>/v1</code>.</p>
 </blockquote>
 <h3>Open</h3>
 <ul>
-<li>GET <code>/ping</code></li>
-<li>POST <code>/register?name={name}&amp;email={email}</code></li>
+<li>
+<p><strong>GET</strong> <code>/ping</code><br />
+Ping the server.</p>
+</li>
+<li>
+<p><strong>POST</strong> <code>/user/new</code><br />
+Register a new user.<br />
+<strong>Request Parameters</strong>:</p>
+<ul>
+<li><code>name</code> (query, required): The name of the user.</li>
+<li><code>email</code> (query, required): The email of the user.</li>
 </ul>
-<h3>Authorization needed</h3>
+</li>
+</ul>
+<h3>Authorization Needed</h3>
 <blockquote>
 <p>[!NOTE]
-The following endpoints are under /user</p>
+The following endpoints are under <code>/auth</code>.</p>
 </blockquote>
 <ul>
-<li>POST <code>/comment?userid={userid}&amp;threadid={threadid}&amp;content={content}</code></li>
+<li><strong>POST</strong> <code>/users/{userid}/comment</code><br />
+Post a comment.<br />
+<strong>Request Parameters</strong>:
+<ul>
+<li><code>userid</code> (path, required): The ID of the user.</li>
+<li><code>threadid</code> (query, required): The ID of the thread.</li>
 </ul>
-<h3>Admin privilleges needed</h3>
+</li>
+</ul>
+<h3>Admin Privileges Needed</h3>
 <blockquote>
 <p>[!NOTE]
-The following endpoints are under /admin</p>
+The following endpoints are under <code>/admin</code>.</p>
 </blockquote>
 <ul>
-<li>POST <code>/sudo?id={userid}</code></li>
-<li>POST <code>/sudo/undo?id={userid}</code></li>
-<li>POST <code>/thread/new</code></li>
-<li>DELETE <code>/thread/delete?threadid={threadid}</code></li>
+<li>
+<p><strong>POST</strong> <code>/admin/users/{userid}/sudo</code><br />
+Grant admin privileges to a user.<br />
+<strong>Request Parameters</strong>:</p>
+<ul>
+<li><code>userid</code> (path, required): The ID of the user.</li>
+</ul>
+</li>
+<li>
+<p><strong>POST</strong> <code>/admin/users/{userid}/sudo/revoke</code><br />
+Revoke admin privileges from a user.<br />
+<strong>Request Parameters</strong>:</p>
+<ul>
+<li><code>userid</code> (path, required): The ID of the user.</li>
+</ul>
+</li>
+<li>
+<p><strong>POST</strong> <code>/threads/new</code><br />
+Create a new thread.<br />
+<strong>Request Parameters</strong>:</p>
+<ul>
+<li><code>title</code> (query, required): The title of the thread.</li>
+</ul>
+</li>
+<li>
+<p><strong>DELETE</strong> <code>/threads/{threadid}</code><br />
+Delete a thread.<br />
+<strong>Request Parameters</strong>:</p>
+<ul>
+<li><code>threadid</code> (path, required): The ID of the thread.</li>
+</ul>
+</li>
 </ul>
 
 </div>

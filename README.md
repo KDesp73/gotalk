@@ -1,32 +1,58 @@
 # gotalk
 
-A general api endpoint to handle comments even on static sites
+A general API endpoint to handle comments even on static sites.
 
 ## Endpoints
 
-Check [api-spec.yml](https://github.com/KDesp73/gotalk/blob/main/api/api-spec.yml) for detailed info
+Check [api-spec.yml](https://github.com/KDesp73/gotalk/blob/main/api/api-spec.yml) for detailed info.
 
 > [!NOTE]
-> All endpoints are under /v1
+> All endpoints are under `/v1`.
 
 ### Open
 
-- GET `/ping`
-- POST `/register?name={name}&email={email}`
+- **GET** `/ping`  
+  Ping the server.
 
-### Authorization needed
+- **POST** `/user/new`  
+  Register a new user.  
+  **Request Parameters**:  
+  - `name` (query, required): The name of the user.
+  - `email` (query, required): The email of the user.  
+
+### Authorization Needed
 
 > [!NOTE]
-> The following endpoints are under /user
+> The following endpoints are under `/auth`.
 
-- POST `/comment?userid={userid}&threadid={threadid}&content={content}`
+- **POST** `/users/{userid}/comment`  
+  Post a comment.  
+  **Request Parameters**:  
+  - `userid` (path, required): The ID of the user.
+  - `threadid` (query, required): The ID of the thread.  
 
-### Admin privilleges needed
+### Admin Privileges Needed
 
 > [!NOTE]
-> The following endpoints are under /admin
+> The following endpoints are under `/admin`.
 
-- POST `/sudo?id={userid}`
-- POST `/sudo/undo?id={userid}`
-- POST `/thread/new`
-- DELETE `/thread/delete?threadid={threadid}`
+- **POST** `/admin/users/{userid}/sudo`  
+  Grant admin privileges to a user.  
+  **Request Parameters**:  
+  - `userid` (path, required): The ID of the user.
+
+- **POST** `/admin/users/{userid}/sudo/revoke`  
+  Revoke admin privileges from a user.  
+  **Request Parameters**:  
+  - `userid` (path, required): The ID of the user.
+
+- **POST** `/threads/new`  
+  Create a new thread.  
+  **Request Parameters**:  
+  - `title` (query, required): The title of the thread.
+
+- **DELETE** `/threads/{threadid}`  
+  Delete a thread.  
+  **Request Parameters**:  
+  - `threadid` (path, required): The ID of the thread.
+

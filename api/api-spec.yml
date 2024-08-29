@@ -16,21 +16,17 @@ paths:
   /user/new:
     post:
       summary: Register a new user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                email:
-                  type: string
-                  format: email
-              required:
-                - name
-                - email
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '201':
           description: Registration complete
@@ -39,26 +35,17 @@ paths:
         '409':
           description: Email already exists
 
-  /users/{userid}/comments:
+  /users/{userid}/comment:
     post:
       summary: Post a comment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                threadid:
-                  type: string
-                content:
-                  type: string
-              required:
-                - threadid
-                - content
       parameters:
         - name: userid
           in: path
+          required: true
+          schema:
+            type: string
+        - name: threadid
+          in: query
           required: true
           schema:
             type: string
@@ -135,15 +122,6 @@ paths:
   /threads:
     get:
       summary: Retrieve all thread ids 
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
       responses:
         '200':
           description: Threads retrieved successfully 
@@ -153,15 +131,12 @@ paths:
   /threads/new:
     post:
       summary: Create a new thread
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
+      parameters:
+        - name: title
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '201':
           description: Thread created successfully
@@ -186,4 +161,5 @@ paths:
           description: Unauthorized
         '404':
           description: Thread not found
+
 

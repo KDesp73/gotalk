@@ -27,6 +27,13 @@ var DUPLICATE = func (s string) json.Json {
 	}
 }
 
+var NOT_SET = func(s string) json.Json {
+	return json.Json{
+		Status: http.StatusBadRequest,
+		Message: fmt.Sprintf("%s not set", s),
+	}
+}
+
 var NOT_FOUND = func(s string) json.Json {
 	return json.Json{
 		Status: http.StatusNotFound,

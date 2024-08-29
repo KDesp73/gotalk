@@ -11,8 +11,8 @@ import (
 )
 
 type State struct {
-	Threads threads.ThreadPool
-	Users users.UserPool
+	Threads threads.ThreadPool `json:"threads"`
+	Users users.UserPool `json:"users"`
 }
 
 var Instance *State
@@ -48,6 +48,15 @@ func LoadState(filename string, key []byte) (*State, error) {
 	decoder := gob.NewDecoder(buf)
 	if err := decoder.Decode(&state); err != nil {
 		return state, err
+	}
+
+	// Fill hashmaps
+	for i, user := range state.Users.Items {
+		state.Users.IdHashMap[user.Key] = i
+	}
+
+	for i, thread := range state.Threads.Items {
+		state.Threads.IdHashMap[thread.ID] = i
 	}
 
 	return state, nil

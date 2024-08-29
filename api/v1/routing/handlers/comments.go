@@ -21,7 +21,7 @@ func GetComments(w http.ResponseWriter, r* http.Request) {
 	threadid = strings.TrimSpace(threadid)
 
 	if threadid == "" {
-		response.Error(w, errors.NOT_FOUND("Thread id"))
+		response.Error(w, errors.NOT_SET("Thread id"))
 		return
 	}
 
@@ -48,7 +48,7 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	threadid := r.FormValue("threadid")
 
 	if strings.TrimSpace(threadid) == "" {
-		response.Error(w, errors.NOT_FOUND("Thread id"))
+		response.Error(w, errors.NOT_SET("Thread id"))
 		return
 	}
 
@@ -79,15 +79,15 @@ func PostComment(w http.ResponseWriter, r *http.Request) {
 	threadid := r.FormValue("threadid")
 
 	if strings.TrimSpace(content) == "" {
-		response.Error(w, errors.NOT_FOUND("Content"))
+		response.Error(w, errors.NOT_SET("Content"))
 		return
 	}
 	if strings.TrimSpace(threadid) == "" {
-		response.Error(w, errors.NOT_FOUND("Thread id"))
+		response.Error(w, errors.NOT_SET("Thread id"))
 		return
 	}
 	if strings.TrimSpace(userid) == "" {
-		response.Error(w, errors.NOT_FOUND("User id"))
+		response.Error(w, errors.NOT_SET("User id"))
 		return
 	}
 

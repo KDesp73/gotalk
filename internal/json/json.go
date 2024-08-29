@@ -3,12 +3,13 @@ package json
 import (
 	"encoding/json"
 	"gotalk/internal/comments"
+	"gotalk/internal/threads"
 	"gotalk/internal/utils"
 )
 
 type NestedJson struct {
 	Key string `json:"key"`
-	Threads []string `json:"threads"`
+	Threads []threads.Thread `json:"threads"`
 	Comments []comments.Comment `json:"comments"`
 }
 

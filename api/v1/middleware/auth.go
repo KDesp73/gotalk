@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"gotalk/internal/state"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -11,7 +10,6 @@ const AuthUserID = "middleware.auth.userID"
 
 func EnsureAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Checking if user is admin")
 		authorization := r.Header.Get("Authorization")
 		prefix := "Bearer "
 
@@ -44,7 +42,7 @@ func EnsureAuthenticated(next http.Handler) http.Handler {
 		encodedToken := strings.TrimPrefix(authorization, prefix)
 
 		match := false
-		for _, user := range state.Instance.Users.Users {
+		for _, user := range state.Instance.Users.Items {
 			if encodedToken == user.Key {
 				match = true
 			}

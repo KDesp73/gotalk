@@ -30,8 +30,8 @@ func Router() *http.ServeMux {
 func AuthRouter() *http.ServeMux {
 	router := http.NewServeMux()
 	
-	router.HandleFunc("POST /users/{userid}/comment", handlers.PostComment) // ?threadid={threadid}&content={content}
 	router.HandleFunc("DELETE /comments/{commentid}", handlers.DeleteComment) // ?threadid={threadid}
+	router.HandleFunc("POST /users/{userid}/comment", handlers.PostComment) // ?threadid={threadid}&content={content}
 	
 	return router
 }
@@ -40,12 +40,14 @@ func AuthRouter() *http.ServeMux {
 func AdminRouter() *http.ServeMux {
 	router := http.NewServeMux()
 
-	router.HandleFunc("PUT /users/{userid}/sudo/", handlers.Sudo)
-	router.HandleFunc("PUT /users/{userid}/sudo/revoke", handlers.UndoSudo)
-	router.HandleFunc("POST /threads/new", handlers.NewThread)
+	router.HandleFunc("GET /comments", handlers.GetComments)
+
 	router.HandleFunc("DELETE /threads/{threadid}", handlers.DeleteThread)
 	router.HandleFunc("GET /threads", handlers.GetThreads)
-	router.HandleFunc("GET /comments", handlers.GetComments)
+	router.HandleFunc("POST /threads/new", handlers.NewThread) // ?title={title}
+
+	router.HandleFunc("PUT /users/{userid}/sudo", handlers.Sudo)
+	router.HandleFunc("PUT /users/{userid}/sudo/revoke", handlers.UndoSudo)
 	
 	return router
 }

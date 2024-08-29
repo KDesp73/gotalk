@@ -2,11 +2,10 @@ package handlers
 
 import (
 	"fmt"
-	"gotalk/internal/state"
 	"gotalk/api/v1/errors"
 	"gotalk/api/v1/response"
-	"gotalk/internal/encryption"
 	"gotalk/internal/json"
+	"gotalk/internal/state"
 	"gotalk/internal/users"
 	"gotalk/internal/utils"
 	"net/http"
@@ -24,14 +23,10 @@ func IsAdmin(w http.ResponseWriter, r *http.Request){
 }
 
 func UndoSudo(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		response.Error(w, errors.FAILED("parsing form"))
-		return
-	}
+	userid := r.PathValue("userid")
+	userid = strings.TrimSpace(userid)
 
-	id := r.FormValue("id")
-	succ := state.Instance.Users.Sudo(encryption.Hash(id), true)
+	succ := state.Instance.Users.Sudo(userid, true)
 
 	if !succ {
 		response.Error(w, errors.FAILED("revoking admin privileges"))
@@ -45,15 +40,10 @@ func UndoSudo(w http.ResponseWriter, r *http.Request) {
 }
 
 func Sudo(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		response.Error(w, errors.FAILED("parsing form"))
-		return
-	}
+	userid := r.PathValue("userid")
+	userid = strings.TrimSpace(userid)
 
-	id := r.FormValue("id")
-
-	succ := state.Instance.Users.Sudo(encryption.Hash(id), false)
+	succ := state.Instance.Users.Sudo(userid, false)
 
 	if !succ {
 		response.Error(w, errors.FAILED("granding admin privileges"))
@@ -78,11 +68,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 
 	if strings.TrimSpace(name) == "" {
-		response.Error(w, errors.NOT_FOUND("Name"))
+		response.Error(w, errors.NOT_SET("Name"))
 		return
 	}
 	if strings.TrimSpace(email) == "" {
-		response.Error(w, errors.NOT_FOUND("Email"))
+		response.Error(w, errors.NOT_SET("Email"))
 		return
 	}
 	if !utils.IsValidEmail(email) {

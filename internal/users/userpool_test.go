@@ -1,7 +1,6 @@
 package users
 
 import (
-	"gotalk/internal/encryption"
 	"gotalk/internal/utils"
 	"testing"
 )
@@ -11,30 +10,30 @@ func TestPushUser(t *testing.T) {
 
 	key := pool.PushUser(&User{})
 
-	if len(pool.Users) != 1 {
-		t.Fatalf("1. One user added and yet %d users found", len(pool.Users))
+	if len(pool.Items) != 1 {
+		t.Fatalf("1. One user added and yet %d users found", len(pool.Items))
 	}
 
-	if pool.idHashMap[key] != 0 {
+	if pool.IdHashMap[key] != 0 {
 		t.Fatalf("1. Id's value should be 0");
 	}
 
-	foundKey := pool.Users[pool.idHashMap[key]].Key
+	foundKey := pool.Items[pool.IdHashMap[key]].Key
 	if foundKey != key {
 		t.Fatalf("1. Invalid user stored. Expected key: %s | Found key: %s\n", key, foundKey)
 	}
 
 	key1 := pool.PushUser(&User{})
 
-	if len(pool.Users) != 2 {
-		t.Fatalf("2. Two user added and yet %d users found", len(pool.Users))
+	if len(pool.Items) != 2 {
+		t.Fatalf("2. Two user added and yet %d users found", len(pool.Items))
 	}
 
-	if pool.idHashMap[key1] != 1 {
+	if pool.IdHashMap[key1] != 1 {
 		t.Fatalf("2. Id's value should be 1");
 	}
 
-	foundKey1 := pool.Users[pool.idHashMap[key1]].Key
+	foundKey1 := pool.Items[pool.IdHashMap[key1]].Key
 	if foundKey1 != key1 {
 		t.Fatalf("2. Invalid user stored. Expected key: %s | Found key: %s\n", key1, foundKey1)
 	}
@@ -69,7 +68,7 @@ func TestIsAdminNo(t *testing.T) {
 	})
 
 
-	if pool.IsAdmin(encryption.Hash(key)) {
+	if pool.IsAdmin(key) {
 		t.Fatalf("User is not an admin")
 	}
 }

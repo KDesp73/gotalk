@@ -5,26 +5,26 @@ import (
 )
 
 type UserPool struct {
-	Users []*User
-	idHashMap map[string]int
+	Items []*User
+	IdHashMap map[string]int
 }
 
 func PoolInit() UserPool {
 	pool := UserPool {
-		idHashMap: make(map[string]int),
+		IdHashMap: make(map[string]int),
 	}
 
 	return pool
 }
 
 func (p UserPool) idExists(id string) bool {
-	_, ok := p.idHashMap[id]
+	_, ok := p.IdHashMap[id]
 	return ok
 }
 
 
 func (p *UserPool) NameExists(name string) bool {
-	for _, user := range p.Users {
+	for _, user := range p.Items {
 		if(name == user.Name) {
 			return true
 		}
@@ -34,7 +34,7 @@ func (p *UserPool) NameExists(name string) bool {
 }
 
 func (p *UserPool) EmailExists(email string) bool {
-	for _, user := range p.Users {
+	for _, user := range p.Items {
 		if(email == user.Email) {
 			return true
 		}
@@ -44,7 +44,7 @@ func (p *UserPool) EmailExists(email string) bool {
 }
 
 func (p *UserPool) Get(id string) *User {
-	return p.Users[p.idHashMap[id]]
+	return p.Items[p.IdHashMap[id]]
 }
 
 func (p *UserPool) GenerateId() string {
@@ -61,9 +61,9 @@ func (p *UserPool) GenerateId() string {
 func (p *UserPool) PushUser(user *User) string {
 	id := p.GenerateId()
 
-	p.idHashMap[id] = len(p.Users) // each key points to the user's index
+	p.IdHashMap[id] = len(p.Items) // each key points to the user's index
 	user.Key = id 
-	p.Users = append(p.Users, user)
+	p.Items = append(p.Items, user)
 
 	return id
 }
@@ -73,16 +73,16 @@ func (p *UserPool) IsAdmin(id string) bool {
 }
 
 func (p *UserPool) Sudo(id string, undo bool) bool {
-	index, exists := p.idHashMap[id]
+	index, exists := p.IdHashMap[id]
 
 	if !exists {
 		return false
 	}
 
 	if undo {
-		p.Users[index].Type = DEFAULT
+		p.Items[index].Type = DEFAULT
 	} else {
-		p.Users[index].Type = ADMIN
+		p.Items[index].Type = ADMIN
 	}
 	return true
 }
