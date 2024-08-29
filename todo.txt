@@ -5,3 +5,4 @@ TODO: get comments
 TODO: add limit on requests
 TODO: tui management application
 TODO: web management application
+TODO: tests for almost all methods

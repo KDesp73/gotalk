@@ -2,11 +2,14 @@ package json
 
 import (
 	"encoding/json"
+	"gotalk/internal/comments"
 	"gotalk/internal/utils"
 )
 
 type NestedJson struct {
 	Key string `json:"key"`
+	Threads []string `json:"threads"`
+	Comments []comments.Comment `json:"comments"`
 }
 
 type Json struct {

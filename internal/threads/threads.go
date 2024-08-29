@@ -12,7 +12,7 @@ type Thread struct {
 	Comments []*comments.Comment
 }
 
-func (t *Thread) AppendComment(author string, content string) {
+func (t *Thread) PushComment(author string, content string) {
 	comment := &comments.Comment{
 		Author: author,
 		Content: content,

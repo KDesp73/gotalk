@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	USER_ADMIN = "admin"
-	USER_DEFAULT = "default"
+	ADMIN = "admin"
+	DEFAULT = "default"
 )
 
 type User struct {

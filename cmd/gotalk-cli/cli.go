@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"gotalk/api/state"
+	"gotalk/internal/state"
 	"gotalk/internal/utils"
 	"gotalk/internal/users"
 	"os"
@@ -98,8 +98,8 @@ func listUsers(s *state.State){
 	borderFmt := "+ %s + %s + %s + %s + %s +\n"
 
 	nameDashes := 20
-	emailDashes := 30
-	keyDashes := 30
+	emailDashes := 24
+	keyDashes := 36
 	typeDashes := 20
 	timeDashes := 19
 	fmt.Printf(borderFmt, dashes(nameDashes), dashes(emailDashes), dashes(keyDashes), dashes(typeDashes), dashes(timeDashes))
@@ -124,14 +124,15 @@ func sudo(s *state.State, name string, un bool) {
 	for _, user := range s.Users.Users {
 		if name == user.Name {
 			if un {
-				user.Type = users.USER_DEFAULT
+				user.Type = users.DEFAULT
 			} else {
-				user.Type = users.USER_ADMIN
+				user.Type = users.ADMIN
 			}
 			found = true
 			break
 		}
 	}
+
 	if !found {
 		fmt.Fprintf(os.Stderr, "%s not found", name)
 	} else if un {

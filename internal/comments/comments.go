@@ -8,11 +8,11 @@ import (
 )
 
 type Comment struct {
-	ID string
-	Author string
-	Content string
-	ThreadID string
-	Timestamp string
+	ID string `json:"id"`
+	Author string `json:"author"`
+	Content string `json:"content"`
+	ThreadID string `json:"threadid"`
+	Timestamp string `json:"timestamp"`
 }
 
 func CreateComment(author string, content string) *Comment {

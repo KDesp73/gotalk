@@ -10,7 +10,6 @@ func TestPushUser(t *testing.T) {
 	pool := PoolInit()
 
 	key := pool.PushUser(&User{})
-	key = encryption.Hash(key)
 
 	if len(pool.Users) != 1 {
 		t.Fatalf("1. One user added and yet %d users found", len(pool.Users))
@@ -26,7 +25,6 @@ func TestPushUser(t *testing.T) {
 	}
 
 	key1 := pool.PushUser(&User{})
-	key1 = encryption.Hash(key1)
 
 	if len(pool.Users) != 2 {
 		t.Fatalf("2. Two user added and yet %d users found", len(pool.Users))
@@ -48,7 +46,7 @@ func TestGet(t *testing.T) {
 	name := "test"
 	email := "test@test.com"
 	time := utils.CurrentTimestamp()
-	typ := USER_ADMIN
+	typ := ADMIN
 	key := pool.PushUser(&User{
 		Name: name,
 		Email: email,
@@ -56,8 +54,7 @@ func TestGet(t *testing.T) {
 		SignUpTime: time,
 	})
 
-	encrKey := encryption.Hash(key)
-	user := pool.Get(encrKey)
+	user := pool.Get(key)
 
 	if user.Name != name || user.Email != email || user.SignUpTime != time || user.Type != typ {
 		t.Fatalf("User is not correct")
@@ -68,7 +65,7 @@ func TestIsAdminNo(t *testing.T) {
 	pool := PoolInit()
 
 	key := pool.PushUser(&User{
-		Type: USER_DEFAULT,
+		Type: DEFAULT,
 	})
 
 
@@ -81,10 +78,10 @@ func TestIsAdminYes(t *testing.T) {
 	pool := PoolInit()
 
 	key := pool.PushUser(&User{
-		Type: USER_ADMIN,
+		Type: ADMIN,
 	})
 
-	if !pool.IsAdmin(encryption.Hash(key)) {
+	if !pool.IsAdmin(key) {
 		t.Fatalf("User should be an admin")
 	}
 }
@@ -93,15 +90,14 @@ func TestSudo(t *testing.T) {
 	pool := PoolInit()
 
 	key := pool.PushUser(&User{
-		Type: USER_DEFAULT,
+		Type: DEFAULT,
 	})
-	key = encryption.Hash(key)
 	
 	pool.Sudo(key, false)
 
 	user := pool.Get(key)
 
-	if user.Type != USER_ADMIN {
+	if user.Type != ADMIN {
 		t.Fatalf("User did not become an admin")
 	}
 }
@@ -111,15 +107,14 @@ func TestUnSudo(t *testing.T) {
 	pool := PoolInit()
 
 	key := pool.PushUser(&User{
-		Type: USER_ADMIN,
+		Type: ADMIN,
 	})
-	key = encryption.Hash(key)
 	
 	pool.Sudo(key, true)
 
 	user := pool.Get(key)
 
-	if user.Type != USER_DEFAULT {
+	if user.Type != DEFAULT {
 		t.Fatalf("User did not become a default")
 	}
 }

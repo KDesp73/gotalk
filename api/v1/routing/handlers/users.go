@@ -2,15 +2,17 @@ package handlers
 
 import (
 	"fmt"
-	"gotalk/api/state"
-	"gotalk/api/v1/response"
+	"gotalk/internal/state"
 	"gotalk/api/v1/errors"
+	"gotalk/api/v1/response"
 	"gotalk/internal/encryption"
 	"gotalk/internal/json"
-	"gotalk/internal/threads"
+	"gotalk/internal/users"
+	"gotalk/internal/utils"
 	"net/http"
 	"strings"
 )
+
 
 func IsAdmin(w http.ResponseWriter, r *http.Request){
 	user := r.PathValue("user")
@@ -64,67 +66,50 @@ func Sudo(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func DeleteThread(w http.ResponseWriter, r *http.Request) {
+func Register(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
+
 	if err != nil {
 		response.Error(w, errors.FAILED("parsing form"))
 		return
 	}
 
-	threadid := r.FormValue("threadid")
+	name := r.FormValue("name")
+	email := r.FormValue("email")
 
-	if strings.TrimSpace(threadid) == "" {
-		response.Error(w, errors.NOT_FOUND("Thread"))
+	if strings.TrimSpace(name) == "" {
+		response.Error(w, errors.NOT_FOUND("Name"))
+		return
+	}
+	if strings.TrimSpace(email) == "" {
+		response.Error(w, errors.NOT_FOUND("Email"))
+		return
+	}
+	if !utils.IsValidEmail(email) {
+		response.Error(w, errors.INVALID("email"))
+		return
+	}
+	if state.Instance.Users.NameExists(name) {
+		response.Error(w, errors.DUPLICATE("name"))
+		return
+	}
+	if state.Instance.Users.EmailExists(email) {
+		response.Error(w, errors.DUPLICATE("email"))
 		return
 	}
 
-	succ := state.Instance.Threads.RemoveThread(threadid)
-	
-	if !succ {
-		response.Error(w, errors.FAILED("deleting thread"))
-		return
-	}
-	
+	key := state.Instance.Users.PushUser(&users.User{
+		Name: name,
+		Email: email,
+		Type: users.DEFAULT,
+		SignUpTime: utils.CurrentTimestamp(),
+	})
+
 	response.Success(w, json.Json{
-		Status: 204,
-		Message: "Thread deleted successfully",
-	})
-}
-
-
-func NewThread(w http.ResponseWriter, r *http.Request) {
-	id := state.Instance.Threads.PushThread(&threads.Thread{})
-
-	response.Success(w, json.Json {
 		Status: 201,
-		Message: "Thread created successfully",
+		Message: "Registration complete",
 		Data: json.NestedJson{
-			Key: id,
+			Key: key,
 		},
-	})
-}
-
-func DeleteComment(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		response.Error(w, errors.FAILED("parsing form"))
-		return
-	}
-
-	id := r.FormValue("id")
-	threadid := r.FormValue("threadid")
-
-	thread := state.Instance.Threads.Get(threadid)
-	index := thread.SearchCommentID(id)
-	succ := thread.RemoveComment(index)
-
-	if !succ {
-		response.Error(w, errors.NOT_FOUND("Comment"))
-		return
-	}
-
-	response.Success(w, json.Json {
-		Status: 204,
-		Message: "Comment removed successfully",
 	})
 }

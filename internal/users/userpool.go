@@ -1,7 +1,6 @@
 package users
 
 import (
-	"gotalk/internal/encryption"
 	"github.com/google/uuid"
 )
 
@@ -61,17 +60,16 @@ func (p *UserPool) GenerateId() string {
 
 func (p *UserPool) PushUser(user *User) string {
 	id := p.GenerateId()
-	hashedId := encryption.Hash(id)
 
-	p.idHashMap[hashedId] = len(p.Users) // each key points to the user's index
-	user.Key = hashedId
+	p.idHashMap[id] = len(p.Users) // each key points to the user's index
+	user.Key = id 
 	p.Users = append(p.Users, user)
 
 	return id
 }
 
 func (p *UserPool) IsAdmin(id string) bool {
-	return p.Get(id).Type == USER_ADMIN
+	return p.Get(id).Type == ADMIN
 }
 
 func (p *UserPool) Sudo(id string, undo bool) bool {
@@ -82,9 +80,9 @@ func (p *UserPool) Sudo(id string, undo bool) bool {
 	}
 
 	if undo {
-		p.Users[index].Type = USER_DEFAULT
+		p.Users[index].Type = DEFAULT
 	} else {
-		p.Users[index].Type = USER_ADMIN
+		p.Users[index].Type = ADMIN
 	}
 	return true
 }

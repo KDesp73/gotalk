@@ -16,12 +16,13 @@ type State struct {
 }
 
 var Instance *State
-var KeySize = 16
-var SaveInterval = 2 * time.Minute
-var BackupInterval = 10 * time.Minute
-var StateFile = "gotalk.gob"
-var StateFileOld = "gotalk.gob.old"
-var StateFileBackup = "gotalk.gob.backup"
+const KeySize = 16
+const SaveInterval = 2 * time.Minute
+const BackupInterval = 10 * time.Minute
+const StateFile = "gotalk.gob"
+const StateFileOld = "gotalk.gob.old"
+const StateFileBackup = "gotalk.gob.backup"
+const StateFileTest = "gotalk.gob.test"
 
 func StateInit() *State {
 	return &State{

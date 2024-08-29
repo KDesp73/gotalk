@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
-	"gotalk/api/state"
+	"gotalk/internal/state"
 	"gotalk/api/v1/middleware"
 	"gotalk/api/v1/routing"
-	"gotalk/internal/options"
+	"gotalk/cmd/gotalk/options"
 	"gotalk/internal/utils"
 	"log"
 	"net/http"

@@ -8,36 +8,44 @@ import (
 
 func Router() *http.ServeMux {
 	router := http.NewServeMux()
-	
-	router.HandleFunc("/", handlers.ServeIndex)
-	router.HandleFunc("GET /ping", handlers.Pong)
-	router.HandleFunc("POST /register", handlers.Register)
-
-	router.Handle("/admin/", http.StripPrefix("/admin", middleware.EnsureAdmin(AdminRouter())))
-	router.Handle("/user/", http.StripPrefix("/user", middleware.EnsureAuthenticated(AuthRouter())))
-
+	auth := http.NewServeMux()
+	admin := http.NewServeMux()
 	v1 := http.NewServeMux()
+	
+	router.HandleFunc("GET /ping", handlers.Pong)
+	router.HandleFunc("POST /users/new", handlers.Register)
+
+	auth.Handle("/", middleware.EnsureAuthenticated(AuthRouter()))
+	admin.Handle("/", middleware.EnsureAdmin(AdminRouter()))
+
 	v1.Handle("/v1/", http.StripPrefix("/v1", router))
+	v1.Handle("/v1/auth/", http.StripPrefix("/v1/auth", auth))
+	v1.Handle("/v1/admin/", http.StripPrefix("/v1/admin", admin))
+	v1.HandleFunc("/", handlers.ServeIndex)
 
 	return v1
 }
 
+// Routes that need at least a registration
 func AuthRouter() *http.ServeMux {
 	router := http.NewServeMux()
 	
-	router.HandleFunc("POST /comment/new", handlers.PostComment)
+	router.HandleFunc("POST /users/{userid}/comment", handlers.PostComment) // ?threadid={threadid}&content={content}
+	router.HandleFunc("DELETE /comments/{commentid}", handlers.DeleteComment) // ?threadid={threadid}
 	
 	return router
 }
 
+// Routes that need administator privileges
 func AdminRouter() *http.ServeMux {
 	router := http.NewServeMux()
 
-	router.HandleFunc("POST /sudo", handlers.Sudo)
-	router.HandleFunc("POST /sudo/undo", handlers.UndoSudo)
-	router.HandleFunc("POST /thread/new", handlers.NewThread)
-	router.HandleFunc("DELETE /thread/delete", handlers.DeleteThread)
-	router.HandleFunc("DELETE /comment/delete", handlers.DeleteComment)
+	router.HandleFunc("PUT /users/{userid}/sudo/", handlers.Sudo)
+	router.HandleFunc("PUT /users/{userid}/sudo/revoke", handlers.UndoSudo)
+	router.HandleFunc("POST /threads/new", handlers.NewThread)
+	router.HandleFunc("DELETE /threads/{threadid}", handlers.DeleteThread)
+	router.HandleFunc("GET /threads", handlers.GetThreads)
+	router.HandleFunc("GET /comments", handlers.GetComments)
 	
 	return router
 }

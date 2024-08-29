@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
-	"gotalk/api/state"
+	"gotalk/internal/state"
 	"gotalk/internal/encryption"
 	"os"
 )

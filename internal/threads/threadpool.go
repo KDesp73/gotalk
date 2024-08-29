@@ -68,3 +68,20 @@ func (p *ThreadPool) Get(id string) *Thread {
 
 	return p.Threads[index]
 }
+
+// SearchCommentID searches for a comment by 
+// the first 7 characters of its ID and 
+// returns its index. Returns -1 if not found.
+func (t *ThreadPool) SearchCommentID(id string) int {
+	if len(id) < 7 {
+		return -1
+	}
+	for _, thread := range t.Threads {
+		for i, comment := range thread.Comments {
+			if len(comment.ID) >= 7 && comment.ID[:7] == id[:7] { // Compare the first 7 characters
+				return i
+			}
+		}
+	}
+	return -1
+}
