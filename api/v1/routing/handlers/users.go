@@ -13,44 +13,40 @@ import (
 )
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
-		authorization := r.Header.Get("Authorization")
-		prefix := "Bearer "
+	authorization := r.Header.Get("Authorization")
+	prefix := "Bearer "
 
-		fmt.Println("Here")
-		if !strings.HasPrefix(authorization, prefix) {
-			response.Error(w, errors.UNAUTHORIZED())
-			return
-		}
+	if !strings.HasPrefix(authorization, prefix) {
+		response.Error(w, errors.UNAUTHORIZED())
+		return
+	}
 
-		encodedToken := strings.TrimPrefix(authorization, prefix)
-		encodedToken = strings.TrimSpace(encodedToken)
-		userid := r.PathValue("userid")
-		userid = strings.TrimSpace(userid)
+	encodedToken := strings.TrimPrefix(authorization, prefix)
+	encodedToken = strings.TrimSpace(encodedToken)
+	userid := r.PathValue("userid")
+	userid = strings.TrimSpace(userid)
 
-		fmt.Printf("userid: %s\nbearer: %s\n", userid, encodedToken)
+	if userid == "" {
+		response.Error(w, errors.NOT_SET("User id"))
+		return
+	}
 
-		if userid == "" {
-			response.Error(w, errors.NOT_SET("User id"))
-			return
-		}
+	if !state.Instance.Users.IsAdmin(encodedToken) && userid != encodedToken {
+		response.Error(w, errors.UNAUTHORIZED())
+		return
+	}
 
-		if !state.Instance.Users.IsAdmin(encodedToken) && userid != encodedToken {
-			response.Error(w, errors.UNAUTHORIZED())
-			return
-		}
+	succ := state.Instance.Users.RemoveUser(userid)
 
-		succ := state.Instance.Users.RemoveUser(userid)
+	if !succ {
+		response.Error(w, errors.FAILED("deleting user"))
+		return
+	}
 
-		if !succ {
-			response.Error(w, errors.FAILED("deleting user"))
-			return
-		}
-
-		response.Success(w, json.Json{
-			Status: 204,
-			Message: "User deleted successfully",
-		})
-	
+	response.Success(w, json.Json{
+		Status: 204,
+		Message: "User deleted successfully",
+	})
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {

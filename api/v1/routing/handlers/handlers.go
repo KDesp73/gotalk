@@ -11,6 +11,7 @@ func Pong(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("pong"))
 }
 
+// TODO: change the way the html file are read
 func ServeIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
 	var file string
