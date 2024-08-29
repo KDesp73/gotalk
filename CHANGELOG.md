@@ -5,10 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [Unreleased]
+## [0.0.1] - 2024-08-29 
 
 ### Added
 
+- Added get users endpoint
+- Added 404 html page and dark mode
 - Added get users endpoint
 - Wrote api-spec.yml
 - Added index.c and Makefile
@@ -35,4 +37,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Correct api-spec.yml
 
 
+[0.0.1]: https://github.com/KDesp73/gotalk/releases/tag/v0.0.1
 
