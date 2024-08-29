@@ -35,7 +35,7 @@ paths:
         '409':
           description: <field> already exists
 
-  /users/{userid}/comment:
+  /auth/users/{userid}/comment:
     post:
       summary: Post a comment
       parameters:

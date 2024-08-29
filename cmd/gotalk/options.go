@@ -14,7 +14,7 @@ type Options struct {
 	GenerateKey bool
 }
 
-func ParseOptions() *Options {
+func parseOptions() *Options {
 	var port = 8080
 	var generate_key = false
 	flag.IntVar(&port, "port", port, "Specify the port")
@@ -28,7 +28,7 @@ func ParseOptions() *Options {
 }
 
 // Handles all cases where the program needs to exit
-func (o *Options)HandleOptions() {
+func (o *Options) handleOptions() {
 	if o.GenerateKey {
 		key, err := encryption.GenerateKey(state.KeySize)
 		if err != nil {

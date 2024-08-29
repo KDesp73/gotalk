@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"gotalk/internal/state"
 	"strings"
 )
 
@@ -16,6 +17,7 @@ type Options struct {
 	AddTest bool
 	AddAdmin bool
 	PrintState bool
+	StatePath string
 }
 
 func ParseOptions() Options {
@@ -31,6 +33,7 @@ func ParseOptions() Options {
 	flag.BoolVar(&options.AddTest, "add-test", options.AddTest, "Add a test user")
 	flag.BoolVar(&options.AddAdmin, "add-admin", options.AddAdmin, "Add an adminuser")
 	flag.BoolVar(&options.PrintState, "print-state", options.PrintState, "Prints the state struct")
+	flag.StringVar(&options.StatePath, "state-path", state.StateFile, "Set the path for the state file")
 	flag.Parse()
 
 	options.Sudo = strings.TrimSpace(options.Sudo)

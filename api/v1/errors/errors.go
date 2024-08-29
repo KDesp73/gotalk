@@ -40,3 +40,10 @@ var NOT_FOUND = func(s string) json.Json {
 		Message: fmt.Sprintf("%s not found", s),
 	}
 }
+
+var UNAUTHORIZED = func() json.Json {
+	return json.Json{
+		Status: http.StatusUnauthorized,
+		Message: "Unauthorized",
+	}
+}

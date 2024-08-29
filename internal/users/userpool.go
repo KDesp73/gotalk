@@ -86,3 +86,20 @@ func (p *UserPool) Sudo(id string, undo bool) bool {
 	}
 	return true
 }
+
+func (p *UserPool) RemoveUser(id string) bool {
+	index, exists := p.IdHashMap[id]
+	if !exists {
+		return false
+	}
+
+	p.Items = append(p.Items[:index], p.Items[index+1:]...)
+
+	delete(p.IdHashMap, id)
+
+	for i := index; i < len(p.Items); i++ {
+		p.IdHashMap[p.Items[i].Key] = i
+	}
+
+	return true
+}

@@ -57,8 +57,8 @@ func main() {
 	backupTicker := time.NewTicker(state.BackupInterval)
 	defer backupTicker.Stop()
 
-	options := ParseOptions()
-	options.HandleOptions()
+	options := parseOptions()
+	options.handleOptions()
 
 	// decodedKey, err := getKey()
 	// if err != nil {

@@ -8,20 +8,17 @@ import (
 
 func Router() *http.ServeMux {
 	router := http.NewServeMux()
-	auth := http.NewServeMux()
-	admin := http.NewServeMux()
 	v1 := http.NewServeMux()
 	
 	router.HandleFunc("GET /ping", handlers.Pong)
 	router.HandleFunc("POST /users/new", handlers.Register) // ?name={name}&email={email}
 
-	auth.Handle("/", middleware.EnsureAuthenticated(AuthRouter()))
-	admin.Handle("/", middleware.EnsureAdmin(AdminRouter()))
+	router.Handle("/auth/", http.StripPrefix("/auth", middleware.EnsureAuthenticated(AuthRouter())))
+	router.Handle("/admin/", http.StripPrefix("/admin", middleware.EnsureAdmin(AdminRouter())))
 
 	v1.Handle("/v1/", http.StripPrefix("/v1", router))
-	v1.Handle("/v1/auth/", http.StripPrefix("/v1/auth", auth))
-	v1.Handle("/v1/admin/", http.StripPrefix("/v1/admin", admin))
 	v1.HandleFunc("/", handlers.ServeIndex)
+	v1.HandleFunc("/dark", handlers.ServeIndex)
 
 	return v1
 }
@@ -32,6 +29,7 @@ func AuthRouter() *http.ServeMux {
 	
 	router.HandleFunc("DELETE /comments/{commentid}", handlers.DeleteComment) // ?threadid={threadid}
 	router.HandleFunc("POST /users/{userid}/comment", handlers.PostComment) // ?threadid={threadid}&content={content}
+	router.HandleFunc("DELETE /users/{userid}", handlers.DeleteUser)
 	
 	return router
 }

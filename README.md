@@ -1,58 +1,138 @@
-# gotalk
+# Gotalk API
 
-A general API endpoint to handle comments even on static sites.
+## Overview
+
+The Gotalk API provides a general endpoint for handling comments, making it suitable for both dynamic and static websites. This API allows users to register, post comments, manage threads, and administer user privileges.
+
+## Version
+
+- **API Version**: 0.0.1
+
+## Base URL
+
+The base URL for the API is `/v1`.
+
+## Subroutes
+
+Endpoints that require registration are under the `/auth` path
+
+Endpoints that require admin privileges are under the `/admin` path
 
 ## Endpoints
 
-Check [api-spec.yml](https://github.com/KDesp73/gotalk/blob/main/api/api-spec.yml) for detailed info.
+### 1. Ping the Server
 
-> [!NOTE]
-> All endpoints are under `/v1`.
+- **GET** `/ping`
+  - **Summary**: Ping the server to check its status.
+  - **Responses**:
+    - `200`: Returns "pong".
 
-### Open
+### 2. User Management
 
-- **GET** `/ping`  
-  Ping the server.
+#### Register a New User
 
-- **POST** `/user/new`  
-  Register a new user.  
-  **Request Parameters**:  
-  - `name` (query, required): The name of the user.
-  - `email` (query, required): The email of the user.  
+- **POST** `/user/new`
+  - **Summary**: Register a new user.
+  - **Parameters**:
+    - `name` (query, required): The name of the user.
+    - `email` (query, required): The email of the user.
+  - **Responses**:
+    - `201`: Registration complete.
+    - `400`: `<field> not set`.
+    - `409`: `<field> already exists`.
 
-### Authorization Needed
+### 3. Comment Management
 
-> [!NOTE]
-> The following endpoints are under `/auth`.
+#### Post a Comment
 
-- **POST** `/users/{userid}/comment`  
-  Post a comment.  
-  **Request Parameters**:  
-  - `userid` (path, required): The ID of the user.
-  - `threadid` (query, required): The ID of the thread.  
+- **POST** `/auth/users/{userid}/comment`
+  - **Summary**: Post a comment to a specific thread.
+  - **Parameters**:
+    - `userid` (path, required): The ID of the user.
+    - `threadid` (query, required): The ID of the thread.
+  - **Responses**:
+    - `201`: Comment posted successfully.
+    - `401`: Unauthorized.
+    - `400`: Bad request.
 
-### Admin Privileges Needed
+#### Delete a Comment
 
-> [!NOTE]
-> The following endpoints are under `/admin`.
+- **DELETE** `/auth/comments/{commentid}`
+  - **Summary**: Delete a specific comment.
+  - **Parameters**:
+    - `commentid` (path, required): The ID of the comment.
+    - `threadid` (query, required): The ID of the thread.
+  - **Responses**:
+    - `204`: Comment deleted successfully.
+    - `404`: Comment not found.
+    - `401`: Unauthorized.
+    - `400`: Bad request.
 
-- **POST** `/admin/users/{userid}/sudo`  
-  Grant admin privileges to a user.  
-  **Request Parameters**:  
-  - `userid` (path, required): The ID of the user.
+### 4. Admin Management
 
-- **POST** `/admin/users/{userid}/sudo/revoke`  
-  Revoke admin privileges from a user.  
-  **Request Parameters**:  
-  - `userid` (path, required): The ID of the user.
+#### Get List of Users
 
-- **POST** `/threads/new`  
-  Create a new thread.  
-  **Request Parameters**:  
-  - `title` (query, required): The title of the thread.
+- **GET** `/admin/users`
+  - **Summary**: Retrieve the list of users.
+  - **Responses**:
+    - `200`: Users retrieved successfully.
+    - `401`: Unauthorized.
 
-- **DELETE** `/threads/{threadid}`  
-  Delete a thread.  
-  **Request Parameters**:  
-  - `threadid` (path, required): The ID of the thread.
+#### Grant Admin Privileges
+
+- **POST** `/admin/users/{userid}/sudo`
+  - **Summary**: Grant admin privileges to a user.
+  - **Parameters**:
+    - `userid` (path, required): The ID of the user.
+  - **Responses**:
+    - `200`: Admin privileges granted.
+    - `401`: Unauthorized.
+    - `404`: User not found.
+    - `500`: Failed to grant admin privileges.
+
+#### Revoke Admin Privileges
+
+- **POST** `/admin/users/{userid}/sudo/revoke`
+  - **Summary**: Revoke admin privileges from a user.
+  - **Parameters**:
+    - `userid` (path, required): The ID of the user.
+  - **Responses**:
+    - `200`: Admin privileges revoked.
+    - `401`: Unauthorized.
+    - `404`: User not found.
+    - `500`: Failed to revoke admin privileges.
+
+### 5. Thread Management
+
+#### Retrieve All Thread IDs
+
+- **GET** `/admin/threads`
+  - **Summary**: Retrieve all thread IDs.
+  - **Responses**:
+    - `200`: Threads retrieved successfully.
+    - `401`: Unauthorized.
+
+#### Create a New Thread
+
+- **POST** `/admin/threads/new`
+  - **Summary**: Create a new thread.
+  - **Parameters**:
+    - `title` (query, required): The title of the thread.
+  - **Responses**:
+    - `201`: Thread created successfully.
+    - `400`: Thread title not set.
+    - `409`: Thread title already exists.
+    - `401`: Unauthorized.
+
+#### Delete a Thread
+
+- **DELETE** `/admin/threads/{threadid}`
+  - **Summary**: Delete a specific thread.
+  - **Parameters**:
+    - `threadid` (path, required): The ID of the thread.
+  - **Responses**:
+    - `204`: Thread deleted successfully.
+    - `400`: Unable to parse request.
+    - `401`: Unauthorized.
+    - `404`: Thread not found.
 

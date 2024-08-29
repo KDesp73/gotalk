@@ -34,18 +34,18 @@ func sudo(s *state.State, name string, un bool) {
 	}
 }
 
-func loadState() *state.State {
+func loadState(path string) *state.State {
 	var s *state.State
-	if utils.FileExists(state.StateFile) {
+	if utils.FileExists(path) {
 		var err error
-		s, err = state.LoadState(state.StateFile, nil)
+		s, err = state.LoadState(path, nil)
 
 		if err != nil || s == nil {
-			fmt.Fprintf(os.Stderr, "ERRO: Could not load state from file\n")
+			fmt.Fprintf(os.Stderr, "ERRO: Could not load state from file: %s\n", path)
 			os.Exit(1)
 		} 
 	} else {
-		fmt.Fprintf(os.Stderr, "ERRO: State file not found\n")
+		fmt.Fprintf(os.Stderr, "ERRO: State file '%s' not found\n", path)
 		os.Exit(1)
 	}
 	return s
@@ -69,7 +69,7 @@ func deleteThread(s *state.State, thread string) {
 
 func main() {
 	options := ParseOptions()	
-	s := loadState()
+	s := loadState(options.StatePath)
 	
 	if(len(os.Args) < 2) {
 		fmt.Fprintln(os.Stderr, "ERRO: At least 1 argument is required")
