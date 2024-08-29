@@ -6,7 +6,6 @@ import (
 	"gotalk/internal/state"
 	"gotalk/api/v1/middleware"
 	"gotalk/api/v1/routing"
-	"gotalk/cmd/gotalk/options"
 	"gotalk/internal/utils"
 	"log"
 	"net/http"
@@ -58,7 +57,7 @@ func main() {
 	backupTicker := time.NewTicker(state.BackupInterval)
 	defer backupTicker.Stop()
 
-	options := options.ParseOptions()
+	options := ParseOptions()
 	options.HandleOptions()
 
 	// decodedKey, err := getKey()

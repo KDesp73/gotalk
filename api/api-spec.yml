@@ -80,6 +80,15 @@ paths:
           description: Unauthorized
         '400':
           description: Bad request
+  
+  /admin/users:
+    get:
+      summary: Get the list of users
+      responses: 
+        '200':
+          description: Users retrieved successfully
+        '401':
+          description: Unauthorized
 
   /admin/users/{userid}/sudo:
     post:

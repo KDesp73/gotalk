@@ -13,7 +13,7 @@ func Router() *http.ServeMux {
 	v1 := http.NewServeMux()
 	
 	router.HandleFunc("GET /ping", handlers.Pong)
-	router.HandleFunc("POST /users/new", handlers.Register)
+	router.HandleFunc("POST /users/new", handlers.Register) // ?name={name}&email={email}
 
 	auth.Handle("/", middleware.EnsureAuthenticated(AuthRouter()))
 	admin.Handle("/", middleware.EnsureAdmin(AdminRouter()))
@@ -40,12 +40,13 @@ func AuthRouter() *http.ServeMux {
 func AdminRouter() *http.ServeMux {
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /comments", handlers.GetComments)
+	router.HandleFunc("GET /comments", handlers.GetComments) // ?threadid={threadid}
 
 	router.HandleFunc("DELETE /threads/{threadid}", handlers.DeleteThread)
 	router.HandleFunc("GET /threads", handlers.GetThreads)
 	router.HandleFunc("POST /threads/new", handlers.NewThread) // ?title={title}
 
+	router.HandleFunc("GET /users", handlers.GetUsers)
 	router.HandleFunc("PUT /users/{userid}/sudo", handlers.Sudo)
 	router.HandleFunc("PUT /users/{userid}/sudo/revoke", handlers.UndoSudo)
 	

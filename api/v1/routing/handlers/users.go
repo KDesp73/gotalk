@@ -12,6 +12,19 @@ import (
 	"strings"
 )
 
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	j := json.Json {
+		Status: 200,
+		Message: "Users retreived successfully",
+		Data: json.NestedJson {},
+	}
+
+	for _, user := range state.Instance.Users.Items {
+		j.Data.Users= append(j.Data.Users, *user)
+	}
+
+	response.Success(w, j)
+}
 
 func IsAdmin(w http.ResponseWriter, r *http.Request){
 	user := r.PathValue("user")

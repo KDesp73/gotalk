@@ -6,3 +6,4 @@ TODO: tests for almost all methods
 DONE: post comments to correct thread
 DONE: post comments with correct author
 DONE: get comments
+DONE: get users
