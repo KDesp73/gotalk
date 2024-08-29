@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Wrote api-spec.yml
+- Added index.c and Makefile
+- User registration
+- Sudo and un-sudo
+- Comment creation and deletion
+- Thread creation and deletion
 - Implemented comments and threads
 - Added error json responses
 - Always responding with json (except ping)
@@ -16,6 +22,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added users
 - Added state
 - Handling termination
+
+### Changed
+
+- Copying state to gotalk.state.old in case of error
+- Changed routing to follow REST architecture
+
+### Fixed
+
+- Fixed load state bug
+- Correct api-spec.yml
 
 
 

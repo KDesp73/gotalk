@@ -29,7 +29,7 @@ func DeleteThread(w http.ResponseWriter, r *http.Request) {
 	threadid = strings.TrimSpace(threadid)
 
 	if threadid == "" {
-		response.Error(w, errors.NOT_SET("Thread"))
+		response.Error(w, errors.NOT_SET("Thread id"))
 		return
 	}
 

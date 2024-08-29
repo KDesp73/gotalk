@@ -31,9 +31,9 @@ paths:
         '201':
           description: Registration complete
         '400':
-          description: Bad request
+          description: <field> not set
         '409':
-          description: Email already exists
+          description: <field> already exists
 
   /users/{userid}/comment:
     post:
@@ -119,7 +119,7 @@ paths:
         '500':
           description: Failed to revoke admin privileges
 
-  /threads:
+  /admin/threads:
     get:
       summary: Retrieve all thread ids 
       responses:
@@ -128,7 +128,7 @@ paths:
         '401':
           description: Unauthorized
 
-  /threads/new:
+  /admin/threads/new:
     post:
       summary: Create a new thread
       parameters:
@@ -140,10 +140,14 @@ paths:
       responses:
         '201':
           description: Thread created successfully
+        '400':
+          description: Thread title not set
+        '409':
+          description: Thread title already exists
         '401':
           description: Unauthorized
 
-  /threads/{threadid}:
+  /admin/threads/{threadid}:
     delete:
       summary: Delete a thread
       parameters:
