@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Gotalk API
   description: A general API endpoint to handle comments even on static sites
-  version: 0.0.1
+  version: 0.0.2
 servers:
   - url: /v1
 paths:

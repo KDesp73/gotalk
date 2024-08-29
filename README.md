@@ -6,7 +6,11 @@ The Gotalk API provides a general endpoint for handling comments, making it suit
 
 ## Version
 
-- **API Version**: 0.0.1
+- **API Version**: 0.0.2
+
+## Specification
+
+[api-spec.yml](https://github.com/KDesp73/gotalk/blob/main/api/api-spec.yml)
 
 ## Base URL
 
